@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'Mailer' => "Почта",
+    'Mailer' => "Эл. почта",
     'Mail manager' => "Менеджер почты",
 ];

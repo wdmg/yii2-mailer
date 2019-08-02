@@ -6,7 +6,7 @@ namespace wdmg\mailer;
  * Yii2 Mailer
  *
  * @category        Module
- * @version         0.0.1
+ * @version         1.0.0
  * @author          Alexsander Vyshnyvetskyy <alex.vyshnyvetskyy@gmail.com>
  * @link            https://github.com/wdmg/yii2-mailer
  * @copyright       Copyright (c) 2019 W.D.M.Group, Ukraine
@@ -46,7 +46,7 @@ class Module extends BaseModule
     /**
      * @var string the module version
      */
-    private $version = "0.0.1";
+    private $version = "1.0.0";
 
     /**
      * @var integer, priority of initialization

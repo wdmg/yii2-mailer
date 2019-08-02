@@ -11,6 +11,7 @@ Mail manager for Yii2
 * PHP 5.6 or higher
 * Yii2 v.2.0.20 and newest
 * [Yii2 Base](https://github.com/wdmg/yii2-base) module (required)
+* [PHP MailMimeParser](https://github.com/zbateson/mail-mime-parser) module (required)
 
 # Installation
 To install the module, run the following command in the console:
@@ -52,4 +53,5 @@ Use the `Module::dashboardNavItems()` method of the module to generate a navigat
     ?>
 
 # Status and version [in progress development]
+* v.1.0.0 - Added MailMimeParser library
 * v.0.0.1 - Added base module, migrations, controllers and translations
