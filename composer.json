@@ -1,0 +1,38 @@
+{
+  "name": "wdmg/yii2-mailer",
+  "description": "Mail manager",
+  "keywords": ["yii2", "yii2-mailer", "mail", "viewer", "wdmg"],
+  "type": "yii2-extension",
+  "license": "MIT",
+  "version": "0.0.1",
+  "homepage": "https://github.com/wdmg/yii2-mailer",
+  "support": {
+    "source": "https://github.com/wdmg/yii2-mailer",
+    "issues": "https://github.com/wdmg/yii2-mailer/issues"
+  },
+  "authors": [
+    {
+      "name": "Alexsander Vyshnyvetskyy",
+      "email": "alex.vyshnyvetskyy@gmail.com"
+    },
+    {
+      "name": "W.D.M.Group, Ukraine",
+      "email": "wdmg.com.ua@gmail.com"
+    }
+  ],
+  "require": {
+    "yiisoft/yii2": "^2.0.20",
+    "wdmg/yii2-base": "^1.0.1"
+  },
+  "minimum-stability": "dev",
+  "autoload": {
+    "psr-4": {
+      "wdmg\\mailer\\": ""
+    }
+  },
+  "extra": {
+    "options": {
+      "routePrefix": "admin"
+    }
+  }
+}
