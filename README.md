@@ -53,5 +53,6 @@ Use the `Module::dashboardNavItems()` method of the module to generate a navigat
     ?>
 
 # Status and version [in progress development]
+* v.1.0.1 - Fixing downloads source of *.eml. Updated translations.
 * v.1.0.0 - Added MailMimeParser library
 * v.0.0.1 - Added base module, migrations, controllers and translations

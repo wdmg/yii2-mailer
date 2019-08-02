@@ -65,7 +65,7 @@ class MailerController extends Controller
      */
     public function actionIndex()
     {
-        $id = 0;
+
         $data = [];
         $mailParser = new \ZBateson\MailMimeParser\MailMimeParser();
         $dir = \yii\helpers\BaseFileHelper::normalizePath(Yii::getAlias('@runtime/mail'));
@@ -83,9 +83,7 @@ class MailerController extends Controller
             $message = $mailParser->parse($rawEml);
             fclose($rawEml);
 
-            $id++;
             $data[] = [
-                'id' => $id,
                 'message_id' => $message->getHeaderValue('Message-ID'),
                 'datetime' => $message->getHeaderValue('Date'),
                 'subject' => $message->getHeaderValue('Subject'),
@@ -96,6 +94,7 @@ class MailerController extends Controller
                 'html_content' => $message->getHtmlContent(),
                 'html_content' => \yii\helpers\HtmlPurifier::process($message->getHtmlContent()),
                 'text_content' => $message->getTextContent(),
+                'filename' => basename($sourcePath),
                 'source' => $sourcePath
             ];
 
@@ -114,38 +113,6 @@ class MailerController extends Controller
         return $this->render('index', [
             'dataProvider' => $dataProvider
         ]);
-    }
-
-
-    /**
-     * Download action for email source.
-     * @return mixed
-     */
-    public function actionDownload($messageId) {
-
-        $mailParser = new \ZBateson\MailMimeParser\MailMimeParser();
-        $dir = \yii\helpers\BaseFileHelper::normalizePath(Yii::getAlias('@runtime/mail'));
-        $emls = \yii\helpers\BaseFileHelper::findFiles($dir, [
-            'only' => ['*.eml']
-        ]);
-        foreach ($emls as $eml) {
-
-            if (strpos($eml, $dir) !== 0)
-                throw new \Exception("Something wrong: {$eml}\n");
-
-            $sourcePath = \yii\helpers\BaseFileHelper::normalizePath($eml);
-            $fileName = pathinfo($sourcePath, PATHINFO_BASENAME);
-            $rawEml = fopen($sourcePath, 'r');
-            $message = $mailParser->parse($rawEml);
-
-            if ($messageId == $message->getHeaderValue('Message-ID')) {
-                Yii::$app->response->sendStreamAsFile($rawEml, $fileName, [
-                    'mimeType' => 'multipart/alternative'
-                ])->send();
-            }
-            fclose($rawEml);
-        }
-        return $this->redirect(['index']);
     }
 
     /**
@@ -184,6 +151,7 @@ class MailerController extends Controller
                     'html_content' => $message->getHtmlContent(),
                     'html_content' => \yii\helpers\HtmlPurifier::process($message->getHtmlContent()),
                     'text_content' => $message->getTextContent(),
+                    'filename' => basename($sourcePath),
                     'source' => $sourcePath
                 ];
             }
@@ -192,6 +160,38 @@ class MailerController extends Controller
         return $this->render('view', [
             'dataProvider' => $data
         ]);
+    }
+
+
+    /**
+     * Download action for email source.
+     * @return mixed
+     */
+    public function actionDownload($messageId) {
+
+        $mailParser = new \ZBateson\MailMimeParser\MailMimeParser();
+        $dir = \yii\helpers\BaseFileHelper::normalizePath(Yii::getAlias('@runtime/mail'));
+        $emls = \yii\helpers\BaseFileHelper::findFiles($dir, [
+            'only' => ['*.eml']
+        ]);
+        foreach ($emls as $eml) {
+
+            if (strpos($eml, $dir) !== 0)
+                throw new \Exception("Something wrong: {$eml}\n");
+
+            $sourcePath = \yii\helpers\BaseFileHelper::normalizePath($eml);
+            $fileName = basename($sourcePath);
+            $rawEml = fopen($sourcePath, 'r');
+            $message = $mailParser->parse($rawEml);
+
+            if ($messageId == $message->getHeaderValue('Message-ID')) {
+                return Yii::$app->response->sendFile($eml, $fileName, [
+                    'mimeType' => 'multipart/alternative'
+                ]);
+            }
+            fclose($rawEml);
+        }
+        return $this->goBack(['index']);
     }
 
 }

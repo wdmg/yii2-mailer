@@ -18,17 +18,62 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $dataProvider,
         'attributes' => [
-            /*'id',*/
-            'message_id:text',
-            'datetime:datetime',
-            'subject:text',
-            'email_from:text',
-            'email_to:text',
-            'email_copy:text',
-            'mime_version:text',
-            'html_content:raw',
-            'text_content:text',
-            'source'
+            [
+                'attribute' => 'message_id',
+                'format' => 'text',
+                'label' => Yii::t('app/modules/mailer', 'Message ID'),
+            ],
+            [
+                'attribute' => 'datetime',
+                'format' => 'datetime',
+                'label' => Yii::t('app/modules/mailer', 'Date/time'),
+            ],
+            [
+                'attribute' => 'subject',
+                'format' => 'text',
+                'label' => Yii::t('app/modules/mailer', 'Subject'),
+            ],
+            [
+                'attribute' => 'email_from',
+                'format' => 'text',
+                'label' => Yii::t('app/modules/mailer', 'Email from'),
+            ],
+            [
+                'attribute' => 'email_to',
+                'format' => 'text',
+                'label' => Yii::t('app/modules/mailer', 'Email to'),
+            ],
+            [
+                'attribute' => 'email_copy',
+                'format' => 'text',
+                'label' => Yii::t('app/modules/mailer', 'Email to (copy)'),
+            ],
+            [
+                'attribute' => 'mime_version',
+                'format' => 'text',
+                'label' => Yii::t('app/modules/mailer', 'MIME-version'),
+            ],
+            [
+                'attribute' => 'html_content',
+                'format' => 'raw',
+                'label' => Yii::t('app/modules/mailer', 'HTML-content'),
+            ],
+            [
+                'attribute' => 'text_content',
+                'format' => 'text',
+                'label' => Yii::t('app/modules/mailer', 'Text-сontent'),
+            ],
+            [
+                'attribute' => 'source',
+                'format' => 'html',
+                'label' => Yii::t('app/modules/mailer', 'Source'),
+                'value' => function($data) {
+                    return Html::a($data['filename'], Url::to(['mailer/download', 'messageId' => $data['message_id']]), [
+                        'target' => '_blank',
+                        'data-pjax' => '0'
+                    ]);
+                }
+            ],
         ],
     ]); ?>
 

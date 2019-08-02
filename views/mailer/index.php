@@ -26,17 +26,48 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
             /*'message_id',*/
-            'datetime:datetime',
-            'subject',
-            'email_from',
-            'email_to',
-            /*'email_copy',*/
-            /*'mime_version',*/
-            'html_content',
-            /*'text_content',*/
-            /*'source',*/
+            [
+                'attribute' => 'datetime',
+                'format' => 'datetime',
+                'label' => Yii::t('app/modules/mailer', 'Date/time'),
+            ],
+            [
+                'attribute' => 'subject',
+                'format' => 'text',
+                'label' => Yii::t('app/modules/mailer', 'Subject'),
+            ],
+            [
+                'attribute' => 'email_from',
+                'format' => 'text',
+                'label' => Yii::t('app/modules/mailer', 'From'),
+            ],
+            [
+                'attribute' => 'email_to',
+                'format' => 'text',
+                'label' => Yii::t('app/modules/mailer', 'To'),
+            ],
+            [
+                'attribute' => 'text_content',
+                'format' => 'text',
+                'label' => Yii::t('app/modules/mailer', 'Content'),
+                'value' => function($data) {
+                    if ($data['text_content'])
+                        return mb_strimwidth($data['text_content'], 0, 155, '…');
+                    elseif ($data['html_content'])
+                        return mb_strimwidth(strip_tags($data['html_content']), 0, 155, '…');
+                    else
+                        return null;
+                }
+            ],
+            [
+                'attribute' => 'source',
+                'format' => 'html',
+                'label' => Yii::t('app/modules/mailer', 'Source'),
+                'value' => function($data) {
+                    return Html::a($data['filename'], Url::to(['mailer/download', 'messageId' => $data['message_id']]));
+                }
+            ],
 
             [
                 'class' => 'yii\grid\ActionColumn',
