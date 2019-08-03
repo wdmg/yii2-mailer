@@ -54,6 +54,16 @@ class Module extends BaseModule
     private $priority = 7;
 
     /**
+     * @var boolean, flag if need save mail after send
+     */
+    public $saveMails = true;
+
+    /**
+     * @var string, path to save mails
+     */
+    public $mailsPath = "@runtime/mail";
+
+    /**
      * {@inheritdoc}
      */
     public function init()
@@ -65,6 +75,10 @@ class Module extends BaseModule
 
         // Set priority of current module
         $this->setPriority($this->priority);
+
+        if (!isset($this->mailsPath))
+            $this->mailsPath = Yii::$app->getMailer()->fileTransportPath;
+
     }
 
     /**
@@ -86,6 +100,21 @@ class Module extends BaseModule
      */
     public function bootstrap($app)
     {
+
         parent::bootstrap($app);
+
+        // Send mail event
+        if (!($app instanceof \yii\console\Application) && $this->module && ($app->mailer instanceof \yii\base\Component)) {
+            \yii\base\Event::on(\yii\mail\BaseMailer::className(), \yii\mail\BaseMailer::EVENT_AFTER_SEND, function ($event) {
+                $sendStatus = $event->isSuccessful;
+                $message = $event->message;
+                $mailer = $event->sender;
+                if ($this->saveMails) {
+                    $messageFile = $mailer->generateMessageFileName();
+                    $messagePath = \yii\helpers\BaseFileHelper::normalizePath(Yii::getAlias($this->mailsPath) .'/'. $messageFile);
+                    file_put_contents($messagePath, $message->toString());
+                }
+            });
+        }
     }
 }

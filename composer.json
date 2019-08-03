@@ -33,7 +33,9 @@
   },
   "extra": {
     "options": {
-      "routePrefix": "admin"
+      "routePrefix": "admin",
+      "saveMails": true,
+      "mailsPath": "@runtime/mail"
     }
   }
 }

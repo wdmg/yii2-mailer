@@ -60,6 +60,31 @@ class MailerController extends Controller
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function beforeAction($action)
+    {
+        $viewed = array();
+        $session = Yii::$app->session;
+
+        if(isset($session['viewed-flash']) && is_array($session['viewed-flash']))
+            $viewed = $session['viewed-flash'];
+
+        if (!(Yii::$app->getMailer()) && !in_array('mailer-need-mailer', $viewed) && is_array($viewed)) {
+            Yii::$app->getSession()->setFlash(
+                'danger',
+                Yii::t(
+                    'app/modules/mailer',
+                    'The mailer component must be configured in the application.'
+                )
+            );
+            $session['viewed-flash'] = array_merge(array_unique($viewed), ['mailer-need-mailer']);
+        }
+
+        return parent::beforeAction($action);
+    }
+
+    /**
      * Lists of all sending emails.
      * @return mixed
      */
@@ -67,8 +92,9 @@ class MailerController extends Controller
     {
 
         $data = [];
+        $mailsPath = $this->module->mailsPath;
         $mailParser = new \ZBateson\MailMimeParser\MailMimeParser();
-        $dir = \yii\helpers\BaseFileHelper::normalizePath(Yii::getAlias('@runtime/mail'));
+        $dir = \yii\helpers\BaseFileHelper::normalizePath(Yii::getAlias($mailsPath));
         $emls = \yii\helpers\BaseFileHelper::findFiles($dir, [
             'only' => ['*.eml']
         ]);
@@ -124,8 +150,9 @@ class MailerController extends Controller
     public function actionView($messageId)
     {
         $data = [];
+        $mailsPath = $this->module->mailsPath;
         $mailParser = new \ZBateson\MailMimeParser\MailMimeParser();
-        $dir = \yii\helpers\BaseFileHelper::normalizePath(Yii::getAlias('@runtime/mail'));
+        $dir = \yii\helpers\BaseFileHelper::normalizePath(Yii::getAlias($mailsPath));
         $emls = \yii\helpers\BaseFileHelper::findFiles($dir, [
             'only' => ['*.eml']
         ]);
@@ -169,8 +196,9 @@ class MailerController extends Controller
      */
     public function actionDownload($messageId) {
 
+        $mailsPath = $this->module->mailsPath;
         $mailParser = new \ZBateson\MailMimeParser\MailMimeParser();
-        $dir = \yii\helpers\BaseFileHelper::normalizePath(Yii::getAlias('@runtime/mail'));
+        $dir = \yii\helpers\BaseFileHelper::normalizePath(Yii::getAlias($mailsPath));
         $emls = \yii\helpers\BaseFileHelper::findFiles($dir, [
             'only' => ['*.eml']
         ]);

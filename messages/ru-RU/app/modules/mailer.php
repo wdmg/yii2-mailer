@@ -21,5 +21,6 @@ return [
     'HTML-content' => "HTML-контент",
     'Source' => "Исходник",
     'Message Id' => "ИД отправления",
+    'The `Mailer` component must be configured in the application.' => "Компонент `Mailer` должен быть сконфигурирован в приложении",
 
 ];

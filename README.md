@@ -33,6 +33,8 @@ To add a module to the project, add the following data in your configuration fil
         'mailer' => [
             'class' => 'wdmg\mailer\Module',
             'routePrefix' => 'admin'
+            'saveMails' => true, // if need save mail after send
+            'mailsPath' => '@runtime/mail' // path to save mails
         ],
         ...
     ],
