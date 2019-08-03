@@ -109,7 +109,7 @@ class Module extends BaseModule
                 $sendStatus = $event->isSuccessful;
                 $message = $event->message;
                 $mailer = $event->sender;
-                if ($this->saveMails) {
+                if ($this->saveMails && !$mailer->useFileTransport) {
                     $messageFile = $mailer->generateMessageFileName();
                     $messagePath = \yii\helpers\BaseFileHelper::normalizePath(Yii::getAlias($this->mailsPath) .'/'. $messageFile);
                     file_put_contents($messagePath, $message->toString());
