@@ -38,7 +38,7 @@ class InitController extends Controller
             '║                                                ║'. "\n" .
             '╚════════════════════════════════════════════════╝';
         echo $name = $this->ansiFormat($welcome . "\n\n", Console::FG_GREEN);
-        /*echo "Select the operation you want to perform:\n";
+        echo "Select the operation you want to perform:\n";
         echo "  1) Apply all module migrations\n";
         echo "  2) Revert all module migrations\n";
         echo "Your choice: ";
@@ -55,7 +55,7 @@ class InitController extends Controller
         } else {
             echo $this->ansiFormat("Error! Your selection has not been recognized.\n\n", Console::FG_RED);
             return ExitCode::UNSPECIFIED_ERROR;
-        }*/
+        }
 
         echo "\n";
         return ExitCode::OK;

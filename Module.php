@@ -6,7 +6,7 @@ namespace wdmg\mailer;
  * Yii2 Mailer
  *
  * @category        Module
- * @version         1.0.1
+ * @version         1.0.2
  * @author          Alexsander Vyshnyvetskyy <alex.vyshnyvetskyy@gmail.com>
  * @link            https://github.com/wdmg/yii2-mailer
  * @copyright       Copyright (c) 2019 W.D.M.Group, Ukraine
@@ -46,7 +46,7 @@ class Module extends BaseModule
     /**
      * @var string the module version
      */
-    private $version = "1.0.1";
+    private $version = "1.0.2";
 
     /**
      * @var integer, priority of initialization
@@ -62,6 +62,16 @@ class Module extends BaseModule
      * @var string, path to save mails
      */
     public $mailsPath = "@runtime/mail";
+
+    /**
+     * @var string, storage message filename
+     */
+    private $messageFileName;
+
+    /**
+     * @var string, storage message tracking key
+     */
+    private $messageTrackKey;
 
     /**
      * {@inheritdoc}
@@ -103,18 +113,78 @@ class Module extends BaseModule
 
         parent::bootstrap($app);
 
+        // Prepare the tracking key
+        $this->messageTrackKey = $app->security->generateRandomString(32);
+        Yii::$app->params["mailer.trackingKey"] = $this->messageTrackKey;
+
+        // Get mailer
+        $mailer = $app->getMailer();
+
+        // If mailer used in test mode set the callback to generate and store message filename
+        if ($mailer->useFileTransport)
+            $mailer->fileTransportCallback = '\wdmg\mailer\Module::generateMessageFileName';
+
         // Send mail event
         if (!($app instanceof \yii\console\Application) && $this->module && ($app->mailer instanceof \yii\base\Component)) {
             \yii\base\Event::on(\yii\mail\BaseMailer::className(), \yii\mail\BaseMailer::EVENT_AFTER_SEND, function ($event) {
-                $sendStatus = $event->isSuccessful;
+
                 $message = $event->message;
-                $mailer = $event->sender;
+                $mailer = $message->mailer;
+
+                $mails = new \wdmg\mailer\models\Mails();
+
+                if (is_array($message->getFrom()))
+                    $mails->email_from = implode(", ", array_keys($message->getFrom()));
+                else
+                    $mails->email_from = $message->getFrom();
+
+                if (is_array($message->getTo()))
+                    $mails->email_to = implode(", ", array_keys($message->getTo()));
+                else
+                    $mails->email_to = $message->getTo();
+
+                if (is_array($message->getCc()))
+                    $mails->email_copy = implode(", ", array_keys($message->getCc()));
+                else
+                    $mails->email_copy = $message->getCc();
+
+                $mails->email_subject = $message->getSubject();
+
                 if ($this->saveMails && !$mailer->useFileTransport) {
-                    $messageFile = $mailer->generateMessageFileName();
-                    $messagePath = \yii\helpers\BaseFileHelper::normalizePath(Yii::getAlias($this->mailsPath) .'/'. $messageFile);
-                    file_put_contents($messagePath, $message->toString());
+                    $this->messageFileName = $mailer->generateMessageFileName();
+                    $messagePath = \yii\helpers\BaseFileHelper::normalizePath(Yii::getAlias($this->mailsPath) .'/'. $this->messageFileName);
+                    if (file_put_contents($messagePath, $message->toString())) {
+                        $mails->email_source = $this->messageFileName;
+                        $mails->is_sended = $event->isSuccessful;
+                    }
+                } else if ($mailer->useFileTransport) {
+                    $this->messageFileName = Yii::$app->params["mailer.messageFileName"];
+                    $mails->email_source = $this->messageFileName;
+                    $mails->is_sended = false;
                 }
+
+                $mails->tracking_key = $this->messageTrackKey;
+
+                // Validate and save model
+                if ($mails->validate())
+                    $mails->save();
+
+                // Clear params
+                Yii::$app->params["mailer.trackingKey"] = null;
+                Yii::$app->params["mailer.messageFileName"] = null;
+
             });
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function generateMessageFileName()
+    {
+        $time = microtime(true);
+        $messageFileName = 'test-' . date('Ymd-His-', $time) . sprintf('%04d', (int) (($time - (int) $time) * 10000)) . '-' . sprintf('%04d', mt_rand(0, 10000)) . '.eml';
+        Yii::$app->params["mailer.messageFileName"] = $messageFileName;
+        return $messageFileName;
     }
 }

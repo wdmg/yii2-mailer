@@ -1,6 +1,9 @@
 Changelog
 =========
 
+## 1.0.2 (2019-08-04)
+ * Added migrations, model and methods
+ 
 ## 1.0.1 (2019-08-02)
  * Fixing downloads source of *.eml. Updated translations.
  

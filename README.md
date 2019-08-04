@@ -22,8 +22,14 @@ After configure db connection, run the following command in the console:
 
 `$ php yii mailer/init`
 
+And select the operation you want to perform:
+  1) Apply all module migrations
+  2) Revert all module migrations
+
 # Migrations
-Module not have any db migrations.
+In any case, you can execute the migration and create the initial data, run the following command in the console:
+
+`$ php yii migrate --migrationPath=@vendor/wdmg/yii2-mailer/migrations`
 
 # Configure
 To add a module to the project, add the following data in your configuration file:
@@ -55,6 +61,6 @@ Use the `Module::dashboardNavItems()` method of the module to generate a navigat
     ?>
 
 # Status and version [in progress development]
+* v.1.0.2 - Added migrations, model and methods
 * v.1.0.1 - Fixing downloads source of *.eml. Updated translations.
 * v.1.0.0 - Added MailMimeParser library
-* v.0.0.1 - Added base module, migrations, controllers and translations
