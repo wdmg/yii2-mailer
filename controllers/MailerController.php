@@ -2,11 +2,13 @@
 
 namespace wdmg\mailer\controllers;
 
+use wdmg\mailer\Module;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use wdmg\mailer\models\Mails;
 
 /**
  * MailerController implements actions.
@@ -25,6 +27,7 @@ class MailerController extends Controller
                 'actions' => [
                     'index' => ['get'],
                     'view' => ['get'],
+                    'track' => ['get'],
                     'delete' => ['post'],
                     'create' => ['get', 'post'],
                     'update' => ['get', 'post'],
@@ -40,6 +43,7 @@ class MailerController extends Controller
                         'allow' => true
                     ],
                 ],
+                'except' => ['track']
             ],
         ];
 
@@ -52,7 +56,8 @@ class MailerController extends Controller
                         'roles' => ['@'],
                         'allow' => true
                     ],
-                ]
+                ],
+                'except' => ['track']
             ];
         }
 
@@ -189,7 +194,6 @@ class MailerController extends Controller
         ]);
     }
 
-
     /**
      * Download action for email source.
      * @return mixed
@@ -222,4 +226,22 @@ class MailerController extends Controller
         return $this->goBack(['index']);
     }
 
+    /**
+     * Finds the Mails model by primary key.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     *
+     * @param integer $id
+     * @return Mails model
+     * @throws NotFoundHttpException if the model not exist or not published
+     */
+    protected function findModel($id)
+    {
+        $model = Mails::findOne($id);
+
+        if (!is_null($model))
+            return $model;
+        else
+            throw new NotFoundHttpException();
+
+    }
 }

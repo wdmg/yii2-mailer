@@ -57,6 +57,15 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'html_content',
                 'format' => 'raw',
                 'label' => Yii::t('app/modules/mailer', 'HTML-content'),
+                'value' => function($data) {
+                    $output = $data['html_content'];
+
+                    // Clearing tracking URL
+                    $trackingRoute = $this->context->module->trackingRoute;
+                    $output = preg_replace('/(\\'.$trackingRoute.'\/track[\?\&\&amp\;]+url\=)/', '', $output);
+                    $output = preg_replace( '/([\?\&\&amp\;]+key\=+[A-Za-z0-9-_]*+|[\?\&\&amp\;]!)/', '', $output);
+                    return $output;
+                }
             ],
             [
                 'attribute' => 'text_content',

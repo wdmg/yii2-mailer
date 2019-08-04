@@ -1,6 +1,9 @@
 Changelog
 =========
 
+## 1.1.0 (2019-08-04)
+ * Added message tracking functionality
+
 ## 1.0.2 (2019-08-04)
  * Added migrations, model and methods
  

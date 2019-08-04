@@ -6,7 +6,7 @@ namespace wdmg\mailer;
  * Yii2 Mailer
  *
  * @category        Module
- * @version         1.0.2
+ * @version         1.1.0
  * @author          Alexsander Vyshnyvetskyy <alex.vyshnyvetskyy@gmail.com>
  * @link            https://github.com/wdmg/yii2-mailer
  * @copyright       Copyright (c) 2019 W.D.M.Group, Ukraine
@@ -64,6 +64,16 @@ class Module extends BaseModule
     public $mailsPath = "@runtime/mail";
 
     /**
+     * @var boolean, flag if need tracking mail after send
+     */
+    public $trackMails = true;
+
+    /**
+     * @var string, route to tracking mails
+     */
+    public $trackingRoute = "/mail";
+
+    /**
      * @var string, storage message filename
      */
     private $messageFileName;
@@ -89,6 +99,8 @@ class Module extends BaseModule
         if (!isset($this->mailsPath))
             $this->mailsPath = Yii::$app->getMailer()->fileTransportPath;
 
+        // Normalize route for tracking messages in frontend
+        $this->trackingRoute = self::normalizeRoute($this->trackingRoute);
     }
 
     /**
@@ -115,7 +127,9 @@ class Module extends BaseModule
 
         // Prepare the tracking key
         $this->messageTrackKey = $app->security->generateRandomString(32);
-        Yii::$app->params["mailer.trackingKey"] = $this->messageTrackKey;
+
+        if ($this->trackMails)
+            Yii::$app->params["mailer.trackingKey"] = $this->messageTrackKey;
 
         // Get mailer
         $mailer = $app->getMailer();
@@ -163,7 +177,8 @@ class Module extends BaseModule
                     $mails->is_sended = false;
                 }
 
-                $mails->tracking_key = $this->messageTrackKey;
+                if ($this->trackMails)
+                    $mails->tracking_key = $this->messageTrackKey;
 
                 // Validate and save model
                 if ($mails->validate())
@@ -175,6 +190,21 @@ class Module extends BaseModule
 
             });
         }
+
+
+        // Add routes to tracking message in frontend
+        if ($this->trackMails) {
+            $trackingRoute = $this->trackingRoute;
+            $app->getUrlManager()->addRules([
+                [
+                    'pattern' => $trackingRoute . '/<track:[\w-]+>',
+                    'route' => 'admin/mailer/default/track',
+                    'suffix' => ''
+                ],
+                $trackingRoute . '/<track:[\w-]+>' => 'admin/mailer/default/track',
+            ], true);
+        }
+
     }
 
     /**

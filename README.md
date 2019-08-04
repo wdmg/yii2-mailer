@@ -40,7 +40,9 @@ To add a module to the project, add the following data in your configuration fil
             'class' => 'wdmg\mailer\Module',
             'routePrefix' => 'admin'
             'saveMails' => true, // if need save mail after send
-            'mailsPath' => '@runtime/mail' // path to save mails
+            'mailsPath' => '@runtime/mail', // path to save mails
+            'trackMails' => true, // if need tracking mail after send
+            'trackingRoute' => '/mail', // route to tracking mails
         ],
         ...
     ],
@@ -61,6 +63,7 @@ Use the `Module::dashboardNavItems()` method of the module to generate a navigat
     ?>
 
 # Status and version [in progress development]
+* v.1.1.0 - Added message tracking functionality
 * v.1.0.2 - Added migrations, model and methods
 * v.1.0.1 - Fixing downloads source of *.eml. Updated translations.
 * v.1.0.0 - Added MailMimeParser library
