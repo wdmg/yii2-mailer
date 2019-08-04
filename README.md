@@ -48,6 +48,9 @@ To add a module to the project, add the following data in your configuration fil
     ],
 
 
+# Usage
+See the [USECASES.md](https://github.com/wdmg/yii2-mailer/blob/master/USECASES.md) for more details.
+
 # Routing
 Use the `Module::dashboardNavItems()` method of the module to generate a navigation items list for NavBar, like this:
 
@@ -63,6 +66,7 @@ Use the `Module::dashboardNavItems()` method of the module to generate a navigat
     ?>
 
 # Status and version [in progress development]
+* v.1.1.1 - Added USECASES.md and refactoring controllers, models and views.
 * v.1.1.0 - Added message tracking functionality
 * v.1.0.2 - Added migrations, model and methods
 * v.1.0.1 - Fixing downloads source of *.eml. Updated translations.

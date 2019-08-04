@@ -9,6 +9,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use wdmg\mailer\models\Mails;
+use wdmg\mailer\models\MailsSearch;
 
 /**
  * MailerController implements actions.
@@ -93,7 +94,7 @@ class MailerController extends Controller
      * Lists of all sending emails.
      * @return mixed
      */
-    public function actionIndex()
+    /*public function actionIndex()
     {
 
         $data = [];
@@ -144,6 +145,17 @@ class MailerController extends Controller
         return $this->render('index', [
             'dataProvider' => $dataProvider
         ]);
+    }*/
+    public function actionIndex()
+    {
+        $searchModel = new MailsSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'module' => $this->module
+        ]);
     }
 
     /**
@@ -152,45 +164,34 @@ class MailerController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($messageId)
+    public function actionView($id)
     {
-        $data = [];
-        $mailsPath = $this->module->mailsPath;
-        $mailParser = new \ZBateson\MailMimeParser\MailMimeParser();
-        $dir = \yii\helpers\BaseFileHelper::normalizePath(Yii::getAlias($mailsPath));
-        $emls = \yii\helpers\BaseFileHelper::findFiles($dir, [
-            'only' => ['*.eml']
-        ]);
-
-        foreach ($emls as $eml) {
-
-            if (strpos($eml, $dir) !== 0)
-                throw new \Exception("Something wrong: {$eml}\n");
-
-            $sourcePath = \yii\helpers\BaseFileHelper::normalizePath($eml);
+        $data = null;
+        $model = $this->findModel($id);
+        $sourcePath = \yii\helpers\BaseFileHelper::normalizePath(Yii::getAlias($this->module->mailsPath) .'/'. $model->email_source);
+        if ($model->email_source && file_exists($sourcePath)) {
+            $mailParser = new \ZBateson\MailMimeParser\MailMimeParser();
             $rawEml = fopen($sourcePath, 'r');
             $message = $mailParser->parse($rawEml);
             fclose($rawEml);
-            if ($messageId == $message->getHeaderValue('Message-ID')) {
-                $data = [
-                    'message_id' => $message->getHeaderValue('Message-ID'),
-                    'datetime' => $message->getHeaderValue('Date'),
-                    'subject' => $message->getHeaderValue('Subject'),
-                    'email_from' => $message->getHeaderValue('From'),
-                    'email_to' => $message->getHeaderValue('To'),
-                    'email_copy' => $message->getHeaderValue('CC'),
-                    'mime_version' => $message->getHeaderValue('MIME-Version'),
-                    'html_content' => $message->getHtmlContent(),
-                    'html_content' => \yii\helpers\HtmlPurifier::process($message->getHtmlContent()),
-                    'text_content' => $message->getTextContent(),
-                    'filename' => basename($sourcePath),
-                    'source' => $sourcePath
-                ];
-            }
+
+            $data = [
+                'message_id' => $message->getHeaderValue('Message-ID'),
+                'datetime' => $message->getHeaderValue('Date'),
+                'subject' => $message->getHeaderValue('Subject'),
+                'email_from' => $message->getHeaderValue('From'),
+                'email_to' => $message->getHeaderValue('To'),
+                'email_copy' => $message->getHeaderValue('CC'),
+                'mime_version' => $message->getHeaderValue('MIME-Version'),
+                'text_content' => $message->getTextContent(),
+                'html_content' => \yii\helpers\HtmlPurifier::process($message->getHtmlContent()),
+            ];
         }
 
         return $this->render('view', [
-            'dataProvider' => $data
+            'module' => $this->module,
+            'dataProvider' => $model,
+            'message' => $data,
         ]);
     }
 
@@ -198,31 +199,14 @@ class MailerController extends Controller
      * Download action for email source.
      * @return mixed
      */
-    public function actionDownload($messageId) {
+    public function actionDownload($source) {
 
-        $mailsPath = $this->module->mailsPath;
-        $mailParser = new \ZBateson\MailMimeParser\MailMimeParser();
-        $dir = \yii\helpers\BaseFileHelper::normalizePath(Yii::getAlias($mailsPath));
-        $emls = \yii\helpers\BaseFileHelper::findFiles($dir, [
-            'only' => ['*.eml']
-        ]);
-        foreach ($emls as $eml) {
+        $sourcePath = \yii\helpers\BaseFileHelper::normalizePath(Yii::getAlias($this->module->mailsPath) .'/'. $source);
+        if (file_exists($sourcePath))
+            return Yii::$app->response->sendFile($sourcePath, $source, [
+                'mimeType' => 'multipart/alternative'
+            ]);
 
-            if (strpos($eml, $dir) !== 0)
-                throw new \Exception("Something wrong: {$eml}\n");
-
-            $sourcePath = \yii\helpers\BaseFileHelper::normalizePath($eml);
-            $fileName = basename($sourcePath);
-            $rawEml = fopen($sourcePath, 'r');
-            $message = $mailParser->parse($rawEml);
-
-            if ($messageId == $message->getHeaderValue('Message-ID')) {
-                return Yii::$app->response->sendFile($eml, $fileName, [
-                    'mimeType' => 'multipart/alternative'
-                ]);
-            }
-            fclose($rawEml);
-        }
         return $this->goBack(['index']);
     }
 

@@ -1,6 +1,9 @@
 Changelog
 =========
 
+## 1.1.1 (2019-08-05)
+ * Added USECASES.md and refactoring controllers, models and views.
+
 ## 1.1.0 (2019-08-04)
  * Added message tracking functionality
 

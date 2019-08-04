@@ -22,56 +22,63 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php Pjax::begin(); ?>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
         'layout' => '{summary}<br\/>{items}<br\/>{summary}<br\/><div class="text-center">{pager}</div>',
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            /*'message_id',*/
+            'email_from',
+            'email_to',
+            'email_subject',
             [
-                'attribute' => 'datetime',
-                'format' => 'datetime',
-                'label' => Yii::t('app/modules/mailer', 'Date/time'),
-            ],
-            [
-                'attribute' => 'subject',
-                'format' => 'text',
-                'label' => Yii::t('app/modules/mailer', 'Subject'),
-            ],
-            [
-                'attribute' => 'email_from',
-                'format' => 'text',
-                'label' => Yii::t('app/modules/mailer', 'From'),
-            ],
-            [
-                'attribute' => 'email_to',
-                'format' => 'text',
-                'label' => Yii::t('app/modules/mailer', 'To'),
-            ],
-            [
-                'attribute' => 'text_content',
-                'format' => 'text',
-                'label' => Yii::t('app/modules/mailer', 'Content'),
-                'value' => function($data) {
-                    if ($data['text_content'])
-                        return mb_strimwidth($data['text_content'], 0, 155, '…');
-                    elseif ($data['html_content'])
-                        return mb_strimwidth(strip_tags($data['html_content']), 0, 155, '…');
-                    else
-                        return null;
-                }
-            ],
-            [
-                'attribute' => 'source',
+                'attribute' => 'email_source',
                 'format' => 'html',
-                'label' => Yii::t('app/modules/mailer', 'Source'),
-                'value' => function($data) {
-                    return Html::a($data['filename'], Url::to(['mailer/download', 'messageId' => $data['message_id']]));
+                'value' => function($data) use ($module) {
+                    $sourcePath = \yii\helpers\BaseFileHelper::normalizePath(Yii::getAlias($module->mailsPath) .'/'. $data->email_source);
+                    if ($data->email_source && file_exists($sourcePath))
+                        return Html::a($data->email_source, Url::to(['mailer/download', 'source' => $data->email_source]));
+                    else
+                        return $data->email_source;
                 }
             ],
+            [
+                'attribute' => 'status',
+                'format' => 'html',
+                'label' => Yii::t('app/modules/mailer', 'Status'),
+                'filter' => SelectInput::widget([
+                    'model' => $searchModel,
+                    'attribute' => 'status',
+                    'items' => $searchModel->getStatusesList(true),
+                    'options' => [
+                        'class' => 'form-control'
+                    ]
+                ]),
+                'headerOptions' => [
+                    'class' => 'text-center'
+                ],
+                'contentOptions' => [
+                    'class' => 'text-center'
+                ],
+                'value' => function($data) {
+                    if ($data->is_sended)
+                        $output = '<span class="label label-success">' . Yii::t('app/modules/mailer', 'Sended') . '</span>';
+                    else
+                        $output = '<span class="label label-danger">' . Yii::t('app/modules/mailer', 'Not sended') . '</span>';
+
+                    if ($data->is_viewed)
+                        $output .= ' <span class="label label-info">' . Yii::t('app/modules/mailer', 'Viewed') . '</span>';
+                    else
+                        $output .= ' <span class="label label-default">' . Yii::t('app/modules/mailer', 'Not viewed') . '</span>';
+
+                    return $output;
+                }
+            ],
+            'created_at:datetime',
+            'updated_at:datetime',
 
             [
                 'class' => 'yii\grid\ActionColumn',
-                'header' => Yii::t('app/modules/pages','Actions'),
+                'header' => Yii::t('app/modules/mailer','Actions'),
                 'headerOptions' => [
                     'class' => 'text-center'
                 ],
@@ -80,20 +87,24 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 'buttons'=> [
                     'view' => function($url, $data, $key) {
-                        return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', Url::to(['mailer/view', 'messageId' => $data['message_id']]), [
+                        return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', Url::to(['mailer/view', 'id' => $data->id]), [
                             'class' => 'mailer-details-link',
                             'title' => Yii::t('yii', 'View'),
                             'data-id' => $key,
                             'data-pjax' => '0'
                         ]);
                     },
-                    'download' => function($url, $data, $key) {
-                        return Html::a('<span class="glyphicon glyphicon-download"></span>', Url::to(['mailer/download', 'messageId' => $data['message_id']]), [
-                            'class' => 'mailer-download-link',
-                            'title' => Yii::t('yii', 'Download'),
-                            'data-id' => $key,
-                            'data-pjax' => '0'
-                        ]);
+                    'download' => function($url, $data, $key) use ($module) {
+                        $sourcePath = \yii\helpers\BaseFileHelper::normalizePath(Yii::getAlias($module->mailsPath) .'/'. $data->email_source);
+                        if ($data->email_source && file_exists($sourcePath))
+                            return Html::a('<span class="glyphicon glyphicon-download"></span>', Url::to(['mailer/download', 'source' => $data->email_source]), [
+                                'class' => 'mailer-download-link',
+                                'title' => Yii::t('yii', 'Download'),
+                                'data-id' => $key,
+                                'data-pjax' => '0'
+                            ]);
+                        else
+                            return false;
                     },
                 ],
                 'template' => '{view}&nbsp;{download}'

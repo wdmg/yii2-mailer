@@ -87,24 +87,48 @@ class Mails extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('app/modules/news', 'ID'),
-            'email_from' => Yii::t('app/modules/news', 'E-mail from'),
-            'email_to' => Yii::t('app/modules/news', 'E-mail to'),
-            'email_copy' => Yii::t('app/modules/news', 'E-mail copy'),
-            'email_subject' => Yii::t('app/modules/news', 'Subject'),
-            'email_source' => Yii::t('app/modules/news', 'Source'),
+            'id' => Yii::t('app/modules/mailer', 'ID'),
+            'email_from' => Yii::t('app/modules/mailer', 'From'),
+            'email_to' => Yii::t('app/modules/mailer', 'To'),
+            'email_copy' => Yii::t('app/modules/mailer', 'Copy'),
+            'email_subject' => Yii::t('app/modules/mailer', 'Subject'),
+            'email_source' => Yii::t('app/modules/mailer', 'Source'),
 
-            'is_sended' => Yii::t('app/modules/news', 'Is sended?'),
-            'is_viewed' => Yii::t('app/modules/news', 'Is viewed?'),
+            'is_sended' => Yii::t('app/modules/mailer', 'Is sended?'),
+            'is_viewed' => Yii::t('app/modules/mailer', 'Is viewed?'),
 
-            'tracking_key' => Yii::t('app/modules/news', 'Tracking key'),
+            'tracking_key' => Yii::t('app/modules/mailer', 'Tracking key'),
 
-            'created_at' => Yii::t('app/modules/news', 'Created at'),
-            'created_by' => Yii::t('app/modules/news', 'Created by'),
-            'updated_at' => Yii::t('app/modules/news', 'Updated at'),
-            'updated_by' => Yii::t('app/modules/news', 'Updated by'),
+            'created_at' => Yii::t('app/modules/mailer', 'Created at'),
+            'created_by' => Yii::t('app/modules/mailer', 'Created by'),
+            'updated_at' => Yii::t('app/modules/mailer', 'Updated at'),
+            'updated_by' => Yii::t('app/modules/mailer', 'Updated by'),
 
         ];
+    }
+
+
+    /**
+     * @return array
+     */
+    public function getStatusesList($allStatuses = false)
+    {
+
+        $statuses = [
+            1 => Yii::t('app/modules/mailer', 'Sended'),
+            2 => Yii::t('app/modules/mailer', 'Not sended'),
+            3 => Yii::t('app/modules/mailer', 'Viewed'),
+            4 => Yii::t('app/modules/mailer', 'Not viewed'),
+            5 => Yii::t('app/modules/mailer', 'Sended and viewed'),
+            6 => Yii::t('app/modules/mailer', 'Sended and not viewed'),
+        ];
+
+        if($allStatuses)
+            $statuses = \yii\helpers\ArrayHelper::merge([
+                '*' => Yii::t('app/modules/mailer', 'All statuses'),
+            ], $statuses);
+
+        return $statuses;
     }
 
     /**

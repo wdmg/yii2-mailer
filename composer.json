@@ -4,7 +4,7 @@
   "keywords": ["yii2", "yii2-mailer", "mail", "viewer", "wdmg"],
   "type": "yii2-extension",
   "license": "MIT",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "homepage": "https://github.com/wdmg/yii2-mailer",
   "support": {
     "source": "https://github.com/wdmg/yii2-mailer",
@@ -23,6 +23,7 @@
   "require": {
     "yiisoft/yii2": "^2.0.20",
     "wdmg/yii2-base": "^1.0.1",
+    "wdmg/yii2-selectinput": "^1.0.5",
     "zbateson/mail-mime-parser": "^1.1.5"
   },
   "minimum-stability": "dev",
@@ -37,7 +38,7 @@
       "saveMails": true,
       "mailsPath": "@runtime/mail",
       "trackMails": true,
-      "mailsPath": "/mail"
+      "trackingRoute": "/mail"
     }
   }
 }
