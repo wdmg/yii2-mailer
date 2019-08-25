@@ -1,6 +1,9 @@
 Changelog
 =========
 
+## 1.1.2 (2019-08-25)
+ * Added functionality for save web version of sent email`s
+ 
 ## 1.1.1 (2019-08-05)
  * Added USECASES.md and refactoring controllers, models and views.
 

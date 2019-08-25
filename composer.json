@@ -4,7 +4,7 @@
   "keywords": ["yii2", "yii2-mailer", "mail", "viewer", "wdmg"],
   "type": "yii2-extension",
   "license": "MIT",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "homepage": "https://github.com/wdmg/yii2-mailer",
   "support": {
     "source": "https://github.com/wdmg/yii2-mailer",
@@ -38,7 +38,10 @@
       "saveMails": true,
       "mailsPath": "@runtime/mail",
       "trackMails": true,
-      "trackingRoute": "/mail"
+      "trackingRoute": "/mail",
+      "saveWebMails": false,
+      "webRoute": "/mails",
+      "webMailsPath": "@webroot/mails"
     }
   }
 }

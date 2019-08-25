@@ -1,5 +1,7 @@
 # Usecase
 
+
+## Tracking
 To track viewing email messages you must be set to `true` for `trackMails` parameter, as well as configure the desired route in the parameter` trackingRoute` in the module configuration (by default, this route is setup as `/mail` which brings your links to view like: `/mail/track?url=SOME_URL&key=UNIQUE_KEY`).
 
 Further, in each sent message it is necessary to provide loading an image in the body of the letter using a special tracking key or integrate such a tracking key directly into the main link by which user transition is assumed.
@@ -34,3 +36,15 @@ Such code will generate something like this in the body of the sent email messag
 When the mail client requests an image in the body of the letter, the module compares the tracking key and determines the sent message as read, and also returns the requested image.
 
 If you selected a link for tracking, the user will also be moved to the specified link.
+
+## Web versions
+You can specify a link to the web version of the sent message, which will be generated and saved in the web browser automatically at the time of sending.
+
+If the option to save the web version of the mail message is enabled in the module configuration, you can use this code to generate the link in mail view of your application:
+
+    if (isset(Yii::$app->params["mailer.webMailUrl"])) {
+        $webMailUrl = Url::to(Yii::$app->params["mailer.webMailUrl"]);
+        echo Yii::t('app/modules/admin', 'Do not see the images? Go to the {link} of this email.', [
+            'link' => Html::a('web version', $webMailUrl),
+        ]);
+    }

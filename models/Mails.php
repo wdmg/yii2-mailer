@@ -23,6 +23,7 @@ use yii\behaviors\BlameableBehavior;
  * @property integer $is_sended
  * @property integer $is_viewed
  * @property string $tracking_key
+ * @property string $web_mail_url
  * @property string $created_at
  * @property integer $created_by
  * @property string $updated_at
@@ -72,6 +73,7 @@ class Mails extends ActiveRecord
             [['email_subject', 'email_source'], 'string', 'max' => 255],
             [['is_sended', 'is_viewed'], 'boolean'],
             [['tracking_key'], 'string', 'max' => 32],
+            [['web_mail_url'], 'string', 'max' => 64],
             [['source', 'created_at', 'updated_at'], 'safe'],
         ];
 
@@ -98,6 +100,7 @@ class Mails extends ActiveRecord
             'is_viewed' => Yii::t('app/modules/mailer', 'Is viewed?'),
 
             'tracking_key' => Yii::t('app/modules/mailer', 'Tracking key'),
+            'web_mail_url' => Yii::t('app/modules/mailer', 'Web-mail URL'),
 
             'created_at' => Yii::t('app/modules/mailer', 'Created at'),
             'created_by' => Yii::t('app/modules/mailer', 'Created by'),

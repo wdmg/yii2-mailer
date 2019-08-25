@@ -43,6 +43,10 @@ To add a module to the project, add the following data in your configuration fil
             'mailsPath' => '@runtime/mail', // path to save mails
             'trackMails' => true, // if need tracking mail after send
             'trackingRoute' => '/mail', // route to tracking mails
+            'saveWebMails' => false, // flag if need save web version of mail`s
+            'webRoute' => '/mails', // route to web mails
+            'webMailsPath' => '@webroot/mails', // path to save web version of sending mail
+            
         ],
         ...
     ],
@@ -66,8 +70,6 @@ Use the `Module::dashboardNavItems()` method of the module to generate a navigat
     ?>
 
 # Status and version [in progress development]
+* v.1.1.2 - Added functionality for save web version of sent email`s
 * v.1.1.1 - Added USECASES.md and refactoring controllers, models and views.
 * v.1.1.0 - Added message tracking functionality
-* v.1.0.2 - Added migrations, model and methods
-* v.1.0.1 - Fixing downloads source of *.eml. Updated translations.
-* v.1.0.0 - Added MailMimeParser library
