@@ -6,7 +6,7 @@ namespace wdmg\mailer;
  * Yii2 Mailer
  *
  * @category        Module
- * @version         1.1.2
+ * @version         1.1.3
  * @author          Alexsander Vyshnyvetskyy <alex.vyshnyvetskyy@gmail.com>
  * @link            https://github.com/wdmg/yii2-mailer
  * @copyright       Copyright (c) 2019 W.D.M.Group, Ukraine
@@ -46,7 +46,7 @@ class Module extends BaseModule
     /**
      * @var string the module version
      */
-    private $version = "1.1.2";
+    private $version = "1.1.3";
 
     /**
      * @var integer, priority of initialization
@@ -295,7 +295,7 @@ class Module extends BaseModule
     /**
      * {@inheritdoc}
      */
-    public function generateMessageFileName()
+    public static function generateMessageFileName()
     {
         $time = microtime(true);
         $messageFileName = 'test-' . date('Ymd-His-', $time) . sprintf('%04d', (int) (($time - (int) $time) * 10000)) . '-' . sprintf('%04d', mt_rand(0, 10000)) . '.eml';

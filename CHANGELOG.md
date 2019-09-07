@@ -1,6 +1,9 @@
 Changelog
 =========
 
+## 1.1.3 (2019-09-07)
+ * Resolve static function
+ 
 ## 1.1.2 (2019-08-25)
  * Added functionality for save web version of sent email`s
  

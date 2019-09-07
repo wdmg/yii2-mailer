@@ -70,6 +70,6 @@ Use the `Module::dashboardNavItems()` method of the module to generate a navigat
     ?>
 
 # Status and version [in progress development]
+* v.1.1.3 - Resolve static function
 * v.1.1.2 - Added functionality for save web version of sent email`s
 * v.1.1.1 - Added USECASES.md and refactoring controllers, models and views.
-* v.1.1.0 - Added message tracking functionality
