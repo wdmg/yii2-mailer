@@ -1,6 +1,9 @@
 Changelog
 =========
 
+## 1.2.0 (2019-11-05)
+ * Added mailer transport configuration
+ 
 ## 1.1.3 (2019-09-07)
  * Resolve static function
  

@@ -6,7 +6,7 @@ namespace wdmg\mailer;
  * Yii2 Mailer
  *
  * @category        Module
- * @version         1.1.3
+ * @version         1.2.0
  * @author          Alexsander Vyshnyvetskyy <alex.vyshnyvetskyy@gmail.com>
  * @link            https://github.com/wdmg/yii2-mailer
  * @copyright       Copyright (c) 2019 W.D.M.Group, Ukraine
@@ -46,12 +46,12 @@ class Module extends BaseModule
     /**
      * @var string the module version
      */
-    private $version = "1.1.3";
+    private $version = "1.2.0";
 
     /**
      * @var integer, priority of initialization
      */
-    private $priority = 7;
+    private $priority = 2;
 
     /**
      * @var boolean, flag if need save mail after send
@@ -109,6 +109,33 @@ class Module extends BaseModule
     public $webMailsPath = "@webroot/mails";
 
     /**
+     * @var array, default transport configuration
+     */
+    public $transport = [
+        'class' => 'Swift_SmtpTransport',
+        'host' => 'localhost',
+        'username' => '',
+        'password' => '',
+        'port' => '25',
+        'encryption' => 'tls'
+    ];
+
+    /**
+     * @var string, views of mail`s messages
+     */
+    public $viewPath = '@app/mail';
+
+    /**
+     * @var boolean, flag for debug
+     */
+    public $useFileTransport = false;
+
+    /**
+     * @var boolean, flag for debug
+     */
+    public $enableLog = true;
+
+    /**
      * {@inheritdoc}
      */
     public function init()
@@ -155,6 +182,43 @@ class Module extends BaseModule
     {
 
         parent::bootstrap($app);
+
+        // Configure the mailer transport
+        if ($mailer = Yii::$app->getMailer()) {
+
+            if (isset(Yii::$app->params["mailer.enableLog"]))
+                $enableLog = Yii::$app->params["mailer.enableLog"];
+            else
+                $enableLog = $this->enableLog;
+
+            if (isset(Yii::$app->params["mailer.transport"]))
+                $transport = Yii::$app->params["mailer.transport"];
+            else
+                $transport = $this->transport;
+
+            if (isset(Yii::$app->params["mailer.viewPath"]))
+                $viewPath = Yii::$app->params["mailer.viewPath"];
+            else
+                $viewPath = $this->viewPath;
+
+            if (isset(Yii::$app->params["mailer.useFileTransport"]))
+                $useFileTransport = Yii::$app->params["mailer.useFileTransport"];
+            else
+                $useFileTransport = $this->useFileTransport;
+
+            if ($enableLog)
+                $mailer->enableSwiftMailerLogging = $enableLog;
+
+            if ($transport)
+                $mailer->setTransport($transport);
+
+            if ($viewPath)
+                $mailer->setViewPath($viewPath);
+
+            if ($useFileTransport)
+                $mailer->useFileTransport = $useFileTransport;
+
+        }
 
         // Prepare the tracking key
         $this->messageTrackKey = $app->security->generateRandomString(32);
@@ -291,6 +355,7 @@ class Module extends BaseModule
         }
 
     }
+
 
     /**
      * {@inheritdoc}
