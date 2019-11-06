@@ -1,6 +1,9 @@
 Changelog
 =========
 
+## 1.2.1 (2019-11-06)
+ * Refactoring mailer options, update README.md
+ 
 ## 1.2.0 (2019-11-05)
  * Added mailer transport configuration
  

@@ -46,19 +46,26 @@ To add a module to the project, add the following data in your configuration fil
             'saveWebMails' => false, // flag if need save web version of mail`s
             'webRoute' => '/mails', // route to web mails
             'webMailsPath' => '@webroot/mails', // path to save web version of sending mail
-            'transport' = [ // mailer transport configuration
+            'useTransport' => false, // flag for use transport configuration
+            'transport' => [ // default transport configuration
                 'class' => 'Swift_SmtpTransport',
                 'host' => 'localhost',
                 'username' => '',
                 'password' => '',
-                'port' => '25',
-                'encryption' => 'tls'
+                'port' => '25'
             ],
-            'viewPath' = '@app/mail', // views of mail`s messages
-            'useFileTransport' = false, // flag for debug
-            'enableLog' = true, // flag for debug
-            
-            
+            'useEncryption' => false, // flag for use encryption in transport
+            'encryption' => 'ssl', // default encryption configuration
+            'useStreamOptions' => false, // flag for use stream options in transport
+            'streamOptions' => [ // default stream options
+                'ssl' => [
+                    'allow_self_signed' => false,
+                    'verify_peer' => false,
+                    'verify_peer_name' => false
+                ]
+            ], 
+            'viewPath' => '@app/mail', // views of mail`s messages
+            'enableLog' => true // flag for debug
         ],
         ...
     ],
@@ -82,6 +89,6 @@ Use the `Module::dashboardNavItems()` method of the module to generate a navigat
     ?>
 
 # Status and version [ready to use]
+* v.1.2.1 - Refactoring mailer options, update README.md
 * v.1.2.0 - Added mailer transport configuration
 * v.1.1.3 - Resolve static function
-* v.1.1.2 - Added functionality for save web version of sent email`s

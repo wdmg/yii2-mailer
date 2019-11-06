@@ -4,7 +4,7 @@
   "keywords": ["yii2", "yii2-mailer", "mail", "viewer", "wdmg"],
   "type": "yii2-extension",
   "license": "MIT",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "homepage": "https://github.com/wdmg/yii2-mailer",
   "support": {
     "source": "https://github.com/wdmg/yii2-mailer",
@@ -42,16 +42,25 @@
       "saveWebMails": false,
       "webRoute": "/mails",
       "webMailsPath": "@webroot/mails",
+      "useTransport": false,
       "transport": {
         "class": "Swift_SmtpTransport",
         "host": "localhost",
         "username": "",
         "password": "",
-        "port": 25,
-        "encryption": "tls"
+        "port": "25"
+      },
+      "useEncryption": false,
+      "encryption": "ssl",
+      "useStreamOptions": false,
+      "streamOptions": {
+        "ssl": {
+          "allow_self_signed": false,
+          "verify_peer": false,
+          "verify_peer_name": false
+        }
       },
       "viewPath": "@app/mail",
-      "useFileTransport": false,
       "enableLog": true
     }
   }

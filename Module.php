@@ -6,7 +6,7 @@ namespace wdmg\mailer;
  * Yii2 Mailer
  *
  * @category        Module
- * @version         1.2.0
+ * @version         1.2.1
  * @author          Alexsander Vyshnyvetskyy <alex.vyshnyvetskyy@gmail.com>
  * @link            https://github.com/wdmg/yii2-mailer
  * @copyright       Copyright (c) 2019 W.D.M.Group, Ukraine
@@ -17,6 +17,7 @@ namespace wdmg\mailer;
 use Yii;
 use wdmg\base\BaseModule;
 use yii\helpers\ArrayHelper;
+use yii\base\InvalidConfigException;
 
 /**
  * Mailer module definition class
@@ -46,7 +47,7 @@ class Module extends BaseModule
     /**
      * @var string the module version
      */
-    private $version = "1.2.0";
+    private $version = "1.2.1";
 
     /**
      * @var integer, priority of initialization
@@ -84,6 +85,63 @@ class Module extends BaseModule
     public $webRoute = "/mails";
 
     /**
+     * @var string, path to save web version of sending mail
+     */
+    public $webMailsPath = "@webroot/mails";
+
+    /**
+     * @var boolean, flag for use transport configuration
+     */
+    public $useTransport = false;
+
+    /**
+     * @var array, default transport configuration
+     */
+    public $transport = [
+        'class' => 'Swift_SmtpTransport',
+        'host' => 'localhost',
+        'username' => '',
+        'password' => '',
+        'port' => '25'
+    ];
+
+    /**
+     * @var boolean, flag for use encryption in transport
+     */
+    public $useEncryption = false;
+
+    /**
+     * @var array, default encryption configuration
+     */
+    public $encryption = 'ssl';
+
+    /**
+     * @var boolean, flag for use stream options in transport
+     */
+    public $useStreamOptions = false;
+
+    /**
+     * @var array, default stream options
+     */
+    public $streamOptions =  [
+        'ssl' => [
+            'allow_self_signed' => false,
+            'verify_peer' => false,
+            'verify_peer_name' => false
+        ]
+    ];
+
+    /**
+     * @var string, views of mail`s messages
+     */
+    public $viewPath = '@app/mail';
+
+    /**
+     * @var boolean, flag for debug
+     */
+    public $enableLog = true;
+
+    /**
      * @var string, storage message filename
      */
     private $messageFileName;
@@ -102,38 +160,6 @@ class Module extends BaseModule
      * @var string, storage URL to web version of sending mail
      */
     private $webMailUrl;
-
-    /**
-     * @var string, path to save web version of sending mail
-     */
-    public $webMailsPath = "@webroot/mails";
-
-    /**
-     * @var array, default transport configuration
-     */
-    public $transport = [
-        'class' => 'Swift_SmtpTransport',
-        'host' => 'localhost',
-        'username' => '',
-        'password' => '',
-        'port' => '25',
-        'encryption' => 'tls'
-    ];
-
-    /**
-     * @var string, views of mail`s messages
-     */
-    public $viewPath = '@app/mail';
-
-    /**
-     * @var boolean, flag for debug
-     */
-    public $useFileTransport = false;
-
-    /**
-     * @var boolean, flag for debug
-     */
-    public $enableLog = true;
 
     /**
      * {@inheritdoc}
@@ -191,32 +217,78 @@ class Module extends BaseModule
             else
                 $enableLog = $this->enableLog;
 
-            if (isset(Yii::$app->params["mailer.transport"]))
-                $transport = Yii::$app->params["mailer.transport"];
-            else
-                $transport = $this->transport;
-
             if (isset(Yii::$app->params["mailer.viewPath"]))
                 $viewPath = Yii::$app->params["mailer.viewPath"];
             else
                 $viewPath = $this->viewPath;
 
-            if (isset(Yii::$app->params["mailer.useFileTransport"]))
-                $useFileTransport = Yii::$app->params["mailer.useFileTransport"];
+            if (isset(Yii::$app->params["mailer.useTransport"]))
+                $useTransport = Yii::$app->params["mailer.useTransport"];
             else
-                $useFileTransport = $this->useFileTransport;
+                $useTransport = $this->useTransport;
 
+            if (isset(Yii::$app->params["mailer.transport"]))
+                $transport = Yii::$app->params["mailer.transport"];
+            else
+                $transport = $this->transport;
+
+            if (isset(Yii::$app->params["mailer.useEncryption"]))
+                $useEncryption = Yii::$app->params["mailer.useEncryption"];
+            else
+                $useEncryption = $this->encryption;
+
+            if (isset(Yii::$app->params["mailer.encryption"]))
+                $encryption = Yii::$app->params["mailer.encryption"];
+            else
+                $encryption = $this->encryption;
+
+            if (isset(Yii::$app->params["mailer.useStreamOptions"]))
+                $useStreamOptions = Yii::$app->params["mailer.useStreamOptions"];
+            else
+                $useStreamOptions = $this->useStreamOptions;
+
+            if (isset(Yii::$app->params["mailer.streamOptions"]))
+                $streamOptions = Yii::$app->params["mailer.streamOptions"];
+            else
+                $streamOptions = $this->streamOptions;
+
+            // Configure transport
+            if ($useTransport) {
+
+
+                // Apply encryption options for transport
+                if ($useEncryption && !is_null($encryption)) {
+                    $transport['encryption'] = $encryption;
+                }
+
+                // Apply stream options for transport
+                if ($useStreamOptions && !is_null($streamOptions)) {
+                    if ($useStreamOptions && !is_array($streamOptions) && !is_object($streamOptions)) {
+                        throw new InvalidConfigException('"' . get_class($this) . '::streamOptions" should be either object or array, "' . gettype($streamOptions) . '" given.');
+                    } else {
+                        $transport['streamOptions'] = $streamOptions;
+                    }
+                }
+
+                // Apply transport configuration
+                if (!is_array($transport) && !is_object($transport)) {
+                    throw new InvalidConfigException('"' . get_class($this) . '::transport" should be either object or array, "' . gettype($transport) . '" given.');
+                } else {
+                    $mailer->setTransport($transport);
+                }
+
+                $mailer->useFileTransport = false;
+            } else {
+                $mailer->useFileTransport = true;
+            }
+
+            // Enable mailer log`s
             if ($enableLog)
                 $mailer->enableSwiftMailerLogging = $enableLog;
 
-            if ($transport)
-                $mailer->setTransport($transport);
-
-            if ($viewPath)
+            // Set of mailer view`s
+            if (!is_null($viewPath))
                 $mailer->setViewPath($viewPath);
-
-            if ($useFileTransport)
-                $mailer->useFileTransport = $useFileTransport;
 
         }
 
