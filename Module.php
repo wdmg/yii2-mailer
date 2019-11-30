@@ -6,7 +6,7 @@ namespace wdmg\mailer;
  * Yii2 Mailer
  *
  * @category        Module
- * @version         1.2.1
+ * @version         1.3.0
  * @author          Alexsander Vyshnyvetskyy <alex.vyshnyvetskyy@gmail.com>
  * @link            https://github.com/wdmg/yii2-mailer
  * @copyright       Copyright (c) 2019 W.D.M.Group, Ukraine
@@ -47,7 +47,7 @@ class Module extends BaseModule
     /**
      * @var string the module version
      */
-    private $version = "1.2.1";
+    private $version = "1.3.0";
 
     /**
      * @var integer, priority of initialization
@@ -72,7 +72,7 @@ class Module extends BaseModule
     /**
      * @var boolean, flag if need save web version of mail`s
      */
-    public $saveWebMails = false;
+    public $saveWebMails = true;
 
     /**
      * @var string, route to tracking mails
@@ -142,24 +142,29 @@ class Module extends BaseModule
     public $enableLog = true;
 
     /**
+     * @var integer, message sending interval in sec.
+     */
+    public $sendingInterval = 1;
+
+    /**
      * @var string, storage message filename
      */
-    private $messageFileName;
+    private $_messageFileName;
 
     /**
      * @var string, storage message tracking key
      */
-    private $messageTrackKey;
+    private $_messageTrackKey;
 
     /**
      * @var string, storage filename to web version of sending mail
      */
-    private $webMailFileName;
+    private $_webMailFilename;
 
     /**
      * @var string, storage URL to web version of sending mail
      */
-    private $webMailUrl;
+    private $_webMailUrl;
 
     /**
      * {@inheritdoc}
@@ -209,72 +214,79 @@ class Module extends BaseModule
 
         parent::bootstrap($app);
 
+        if (isset(Yii::$app->params["mailer.saveMails"]))
+            $this->saveMails = Yii::$app->params["mailer.saveMails"];
+
+        if (isset(Yii::$app->params["mailer.mailsPath"]))
+            $this->mailsPath = Yii::$app->params["mailer.mailsPath"];
+
+        if (isset(Yii::$app->params["mailer.trackMails"]))
+            $this->trackMails = Yii::$app->params["mailer.trackMails"];
+
+        if (isset(Yii::$app->params["mailer.saveWebMails"]))
+            $this->saveWebMails = Yii::$app->params["mailer.saveWebMails"];
+
+        if (isset(Yii::$app->params["mailer.trackingRoute"]))
+            $this->trackingRoute = Yii::$app->params["mailer.trackingRoute"];
+
+        if (isset(Yii::$app->params["mailer.webRoute"]))
+            $this->webRoute = Yii::$app->params["mailer.webRoute"];
+
+        if (isset(Yii::$app->params["mailer.webMailsPath"]))
+            $this->webMailsPath = Yii::$app->params["mailer.webMailsPath"];
+
+        if (isset(Yii::$app->params["mailer.useTransport"]))
+            $this->useTransport = Yii::$app->params["mailer.useTransport"];
+
+        if (isset(Yii::$app->params["mailer.transport"]))
+            $this->transport = Yii::$app->params["mailer.transport"];
+
+        if (isset(Yii::$app->params["mailer.useEncryption"]))
+            $this->useEncryption = Yii::$app->params["mailer.useEncryption"];
+
+        if (isset(Yii::$app->params["mailer.encryption"]))
+            $this->encryption = Yii::$app->params["mailer.encryption"];
+
+        if (isset(Yii::$app->params["mailer.useStreamOptions"]))
+            $this->useStreamOptions = Yii::$app->params["mailer.useStreamOptions"];
+
+        if (isset(Yii::$app->params["mailer.streamOptions"]))
+            $this->streamOptions = Yii::$app->params["mailer.streamOptions"];
+
+        if (isset(Yii::$app->params["mailer.viewPath"]))
+            $this->viewPath = Yii::$app->params["mailer.viewPath"];
+
+        if (isset(Yii::$app->params["mailer.enableLog"]))
+            $this->enableLog = Yii::$app->params["mailer.enableLog"];
+
+        if (isset(Yii::$app->params["mailer.sendingInterval"]))
+            $this->sendingInterval = Yii::$app->params["mailer.sendingInterval"];
+
         // Configure the mailer transport
         if ($mailer = Yii::$app->getMailer()) {
 
-            if (isset(Yii::$app->params["mailer.enableLog"]))
-                $enableLog = Yii::$app->params["mailer.enableLog"];
-            else
-                $enableLog = $this->enableLog;
-
-            if (isset(Yii::$app->params["mailer.viewPath"]))
-                $viewPath = Yii::$app->params["mailer.viewPath"];
-            else
-                $viewPath = $this->viewPath;
-
-            if (isset(Yii::$app->params["mailer.useTransport"]))
-                $useTransport = Yii::$app->params["mailer.useTransport"];
-            else
-                $useTransport = $this->useTransport;
-
-            if (isset(Yii::$app->params["mailer.transport"]))
-                $transport = Yii::$app->params["mailer.transport"];
-            else
-                $transport = $this->transport;
-
-            if (isset(Yii::$app->params["mailer.useEncryption"]))
-                $useEncryption = Yii::$app->params["mailer.useEncryption"];
-            else
-                $useEncryption = $this->encryption;
-
-            if (isset(Yii::$app->params["mailer.encryption"]))
-                $encryption = Yii::$app->params["mailer.encryption"];
-            else
-                $encryption = $this->encryption;
-
-            if (isset(Yii::$app->params["mailer.useStreamOptions"]))
-                $useStreamOptions = Yii::$app->params["mailer.useStreamOptions"];
-            else
-                $useStreamOptions = $this->useStreamOptions;
-
-            if (isset(Yii::$app->params["mailer.streamOptions"]))
-                $streamOptions = Yii::$app->params["mailer.streamOptions"];
-            else
-                $streamOptions = $this->streamOptions;
-
             // Configure transport
-            if ($useTransport) {
-
+            if ($this->useTransport) {
 
                 // Apply encryption options for transport
-                if ($useEncryption && !is_null($encryption)) {
-                    $transport['encryption'] = $encryption;
+                if ($useEncryption && !is_null($this->encryption)) {
+                    $this->transport['encryption'] = $this->encryption;
                 }
 
                 // Apply stream options for transport
-                if ($useStreamOptions && !is_null($streamOptions)) {
-                    if ($useStreamOptions && !is_array($streamOptions) && !is_object($streamOptions)) {
-                        throw new InvalidConfigException('"' . get_class($this) . '::streamOptions" should be either object or array, "' . gettype($streamOptions) . '" given.');
+                if ($this->useStreamOptions && !is_null($this->streamOptions)) {
+                    if ($this->useStreamOptions && !is_array($this->streamOptions) && !is_object($this->streamOptions)) {
+                        throw new InvalidConfigException('"' . get_class($this) . '::streamOptions" should be either object or array, "' . gettype($this->streamOptions) . '" given.');
                     } else {
-                        $transport['streamOptions'] = $streamOptions;
+                        $this->transport['streamOptions'] = $this->streamOptions;
                     }
                 }
 
                 // Apply transport configuration
-                if (!is_array($transport) && !is_object($transport)) {
-                    throw new InvalidConfigException('"' . get_class($this) . '::transport" should be either object or array, "' . gettype($transport) . '" given.');
+                if (!is_array($this->transport) && !is_object($this->transport)) {
+                    throw new InvalidConfigException('"' . get_class($this) . '::transport" should be either object or array, "' . gettype($this->transport) . '" given.');
                 } else {
-                    $mailer->setTransport($transport);
+                    $mailer->setTransport($this->transport);
                 }
 
                 $mailer->useFileTransport = false;
@@ -283,75 +295,71 @@ class Module extends BaseModule
             }
 
             // Enable mailer log`s
-            if ($enableLog)
-                $mailer->enableSwiftMailerLogging = $enableLog;
+            if ($this->enableLog)
+                $mailer->enableSwiftMailerLogging = $this->enableLog;
 
             // Set of mailer view`s
-            if (!is_null($viewPath))
-                $mailer->setViewPath($viewPath);
+            if (!is_null($this->viewPath))
+                $mailer->setViewPath($this->viewPath);
 
-        }
+            /** !!! **/
+            if (isset(Yii::$app->params["mailer.saveWebMails"]))
+                $this->saveWebMails = Yii::$app->params["mailer.saveWebMails"];
 
-        // Prepare the tracking key
-        $this->messageTrackKey = $app->security->generateRandomString(32);
-
-        if ($this->trackMails)
-            Yii::$app->params["mailer.trackingKey"] = $this->messageTrackKey;
-
-        // Prepare the webmail URL
-        if ($this->saveWebMails && is_null($this->webMailUrl) && is_null($this->webMailFileName)) {
-            $this->webMailFileName = \date('Y-m-d-h-i-s') . '_' . \time() . '.html';
-            $this->webMailUrl = \yii\helpers\Url::to(\yii\helpers\Url::home(true) . $this->webRoute . '/'. $this->webMailFileName);
-            $this->webMailUrl = ltrim(preg_replace('#/{2,}#', '/', $this->webMailUrl), '/');
-            Yii::$app->params["mailer.webMailUrl"] = $this->webMailUrl;
         }
 
         // Get mailer
         $mailer = $app->getMailer();
 
         // If mailer used in test mode set the callback to generate and store message filename
-        if ($mailer->useFileTransport)
+        if ($mailer->useFileTransport === true)
             $mailer->fileTransportCallback = '\wdmg\mailer\Module::generateMessageFileName';
+
 
         // Mail event`s
         if (!($app instanceof \yii\console\Application) && $this->module && ($app->mailer instanceof \yii\base\Component)) {
 
-            if ($this->saveWebMails) {
-                \yii\base\Event::on(\yii\mail\BaseMailer::className(), \yii\mail\BaseMailer::EVENT_BEFORE_SEND, function ($event) {
+            \yii\base\Event::on(\yii\mail\BaseMailer::className(), \yii\mail\BaseMailer::EVENT_BEFORE_SEND, function ($event) use ($app) {
 
-                    // Get instance of message
-                    $message = $event->message;
+                // Set message sending interval
+                if (!is_null($this->sendingInterval))
+                    sleep(intval($this->sendingInterval));
 
-                    // Prepare raw html content
-                    if ($message instanceof \yii\swiftmailer\Message) {
-                        $swiftMessage = $message->getSwiftMessage();
-                        $reflection = new \ReflectionObject($swiftMessage);
-                        $parent = $reflection->getParentClass()->getParentClass()->getParentClass(); //\Swift_Mime_SimpleMimeEntity
-                        $body = $parent->getProperty('_immediateChildren');
-                        $body->setAccessible(true);
-                        $childs = $body->getValue($swiftMessage);
-                        foreach ($childs as $child) {
-                            if ($child instanceof \Swift_MimePart && $child->getContentType() == 'text/html') {
-                                $html = $child->getBody();
-                                //$body->setAccessible(false);
-                                break;
-                            } else {
-                                $html = $message->toString();
-                            }
+                // Output message html for Mailer log
+                $html = null;
+
+                // Get instance of message
+                $message = $event->message;
+
+                // Prepare raw html content
+                if ($message instanceof \yii\swiftmailer\Message) {
+                    $swiftMessage = $message->getSwiftMessage();
+                    $reflection = new \ReflectionObject($swiftMessage);
+                    $parent = $reflection->getParentClass()->getParentClass()->getParentClass();
+                    $body = $parent->getProperty('_immediateChildren');
+                    $body->setAccessible(true);
+                    $childs = $body->getValue($swiftMessage);
+                    foreach ($childs as $child) {
+                        if ($child instanceof \Swift_MimePart && $child->getContentType() == 'text/html') {
+                            $html = $child->getBody();
+                            break;
+                        } else {
+                            $html = $message->toString();
                         }
-                        //$body->setAccessible(false);
-                    } else {
-                        $html = $message->toString();
                     }
+                } else {
+                    $html = $message->toString();
+                }
 
-                    if ($html) {
-                        $rawMessagePath = \yii\helpers\BaseFileHelper::normalizePath(Yii::getAlias('@webroot') . $this->webRoute . '/'. $this->webMailFileName);
-                        if (!file_put_contents($rawMessagePath, $html))
-                            $this->webMailUrl = false;
+                if ($this->saveWebMails && !is_null($html) && ($filename = $this->getWebMailFilename())) {
+                    $rawMessagePath = \yii\helpers\BaseFileHelper::normalizePath(Yii::getAlias($this->webMailsPath) . '/'. $filename);
+                    if (!file_put_contents($rawMessagePath, $html)) {
+                        $this->_webMailUrl = null;
+                        $html = '';
                     }
+                }
 
-                });
-            }
+            });
 
             \yii\base\Event::on(\yii\mail\BaseMailer::className(), \yii\mail\BaseMailer::EVENT_AFTER_SEND, function ($event) {
 
@@ -381,33 +389,35 @@ class Module extends BaseModule
 
                 $mails->email_subject = $message->getSubject();
 
-                if ($this->saveMails && !$mailer->useFileTransport) {
-                    $this->messageFileName = $mailer->generateMessageFileName();
-                    $messagePath = \yii\helpers\BaseFileHelper::normalizePath(Yii::getAlias($this->mailsPath) .'/'. $this->messageFileName);
-                    if (file_put_contents($messagePath, $message->toString())) {
-                        $mails->email_source = $this->messageFileName;
-                        $mails->is_sended = $event->isSuccessful;
-                    }
-                } else if ($mailer->useFileTransport) {
-                    $this->messageFileName = Yii::$app->params["mailer.messageFileName"];
-                    $mails->email_source = $this->messageFileName;
+                if ($this->useTransport)
+                    $mails->is_sended = $event->isSuccessful;
+                else
                     $mails->is_sended = false;
+
+                if ($this->saveMails && $mailer->useFileTransport === false) {
+                    $this->_messageFileName = $mailer->generateMessageFileName();
+                    $messagePath = \yii\helpers\BaseFileHelper::normalizePath(Yii::getAlias($this->mailsPath) .'/'. $this->_messageFileName);
+
+                    if (file_put_contents($messagePath, $message->toString()))
+                        $mails->email_source = $this->_messageFileName;
+
+                } else if ($mailer->useFileTransport === true) {
+                    $this->_messageFileName = Yii::$app->params["mailer.messageFileName"];
+                    $mails->email_source = $this->_messageFileName;
                 }
 
-                if ($this->trackMails)
-                    $mails->tracking_key = $this->messageTrackKey;
+                if ($this->trackMails && $trackingKey = $this->getTrackingKey())
+                    $mails->tracking_key = $trackingKey;
 
-                if ($this->saveWebMails && $this->webMailUrl)
-                    $mails->web_mail_url = $this->webMailUrl;
+                if ($this->saveWebMails && $_webMailUrl = $this->getWebMailUrl())
+                    $mails->web_mail_url = $_webMailUrl;
 
                 // Validate and save model
                 if ($mails->validate())
                     $mails->save();
 
                 // Clear params
-                Yii::$app->params["mailer.trackingKey"] = null;
-                Yii::$app->params["mailer.messageFileName"] = null;
-                Yii::$app->params["mailer.webMailUrl"] = null;
+                $this->clearSendSession();
 
             });
         }
@@ -426,6 +436,141 @@ class Module extends BaseModule
             ], true);
         }
 
+
+        // Configure mailer component
+        $app->setComponents([
+            'mails' => [
+                'class' => 'wdmg\mailer\components\Mails'
+            ]
+        ]);
+
+    }
+
+
+    /**
+     * Generates and returns a tracking key for a sent message
+     *
+     * @return null|string, string of tracking key or null if tracking is disabled
+     */
+    public function genTrackingKey()
+    {
+        if ($this->trackMails) {
+            $trackingKey = Yii::$app->security->generateRandomString(32);
+            $this->setTrackingKey($trackingKey);
+            return $trackingKey;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Set the tracking key for a sent message
+     *
+     * @param $trackingKey, string of tracking key
+     */
+    public function setTrackingKey($trackingKey)
+    {
+        if (!is_null($trackingKey))
+            $this->_messageTrackKey = $trackingKey;
+        else
+            $this->_messageTrackKey = null;
+
+    }
+
+    /**
+     * Returns the tracking key for a sent message
+     *
+     * @return null|string, string of tracking key
+     */
+    public function getTrackingKey()
+    {
+        if (!is_null($this->_messageTrackKey))
+            return $this->_messageTrackKey;
+        else
+            return null;
+    }
+
+    /**
+     * Generates and returns URL to the web version of the sent email
+     *
+     * @return null|string, URL to the web version or null if web version is disabled
+     */
+    public function genWebMailUrl()
+    {
+        if ($this->saveWebMails) {
+            $filename = \date('Y-m-d-h-i-s') . '_' . \time() . '-' . rand(1000, 9999) . '.html';
+            $this->setWebMailFilename($filename);
+            $_webMailUrl = \yii\helpers\Url::to(\yii\helpers\Url::home(true) . $this->webRoute . '/' . $filename);
+            $_webMailUrl = ltrim(preg_replace('#/{2,}#', '/', $_webMailUrl), '/');
+            $this->setWebMailUrl($_webMailUrl);
+            return $_webMailUrl;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Set the filename to the web version of the email
+     *
+     * @param $_webMailFilename, string of web version filename
+     */
+    public function setWebMailFilename($_webMailFilename)
+    {
+        if (!is_null($_webMailFilename)) {
+            $this->_webMailFilename = $_webMailFilename;
+        } else {
+            $this->_webMailFilename = null;
+        }
+    }
+
+    /**
+     * Set the URL to the web version of the email
+     *
+     * @param $_webMailUrl, string of web version URL
+     */
+    public function setWebMailUrl($_webMailUrl)
+    {
+        if (!is_null($_webMailUrl))
+            $this->_webMailUrl = $_webMailUrl;
+        else
+            $this->_webMailUrl = null;
+
+    }
+
+    /**
+     * Returns the URL to the web version of the email
+     *
+     * @return null|string, URL to the web version
+     */
+    public function getWebMailUrl()
+    {
+        if (!is_null($this->_webMailUrl))
+            return $this->_webMailUrl;
+        else
+            return null;
+    }
+
+    /**
+     * Returns the filename of the web version
+     */
+    public function getWebMailFilename()
+    {
+        if (!is_null($this->_webMailFilename))
+            return $this->_webMailFilename;
+        else
+            return null;
+    }
+
+    /**
+     * Clears the system parameters of the send session
+     */
+    private function clearSendSession()
+    {
+        Yii::$app->params["mailer.messageFileName"] = null;
+        $this->_messageTrackKey = null;
+        $this->_messageFileName = null;
+        $this->_webMailFilename = null;
+        $this->_webMailUrl = null;
     }
 
 
@@ -435,9 +580,9 @@ class Module extends BaseModule
     public static function generateMessageFileName()
     {
         $time = microtime(true);
-        $messageFileName = 'test-' . date('Ymd-His-', $time) . sprintf('%04d', (int) (($time - (int) $time) * 10000)) . '-' . sprintf('%04d', mt_rand(0, 10000)) . '.eml';
-        Yii::$app->params["mailer.messageFileName"] = $messageFileName;
-        return $messageFileName;
+        $_messageFileName = date('Ymd-His-', $time) . sprintf('%04d', (int) (($time - (int) $time) * 10000)) . '-' . sprintf('%04d', mt_rand(0, 10000)) . '.eml';
+        Yii::$app->params["mailer.messageFileName"] = $_messageFileName;
+        return $_messageFileName;
     }
 
 
@@ -447,7 +592,8 @@ class Module extends BaseModule
     public function install()
     {
         parent::install();
-        $path = Yii::getAlias('@webroot') . $this->webMailsPath;
+        $path = Yii::getAlias($this->webMailsPath);
+
         if (\yii\helpers\FileHelper::createDirectory($path, $mode = 0775, $recursive = true))
             return true;
         else
@@ -460,7 +606,8 @@ class Module extends BaseModule
     public function uninstall()
     {
         parent::uninstall();
-        $path = Yii::getAlias('@webroot') . $this->webMailsPath;
+        $path = Yii::getAlias($this->webMailsPath);
+
         if (\yii\helpers\FileHelper::removeDirectory($path))
             return true;
         else

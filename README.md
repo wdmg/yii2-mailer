@@ -46,6 +46,7 @@ To add a module to the project, add the following data in your configuration fil
             'saveWebMails' => false, // flag if need save web version of mail`s
             'webRoute' => '/mails', // route to web mails
             'webMailsPath' => '@webroot/mails', // path to save web version of sending mail
+            'sendingInterval' => 1, // message sending interval in sec.
             'useTransport' => false, // flag for use transport configuration
             'transport' => [ // default transport configuration
                 'class' => 'Swift_SmtpTransport',
@@ -89,6 +90,7 @@ Use the `Module::dashboardNavItems()` method of the module to generate a navigat
     ?>
 
 # Status and version [ready to use]
+* v.1.3.0 - Refactoring mailer module, added mails component, update README.md and USECASES.md
 * v.1.2.1 - Refactoring mailer options, update README.md
 * v.1.2.0 - Added mailer transport configuration
 * v.1.1.3 - Resolve static function

@@ -72,6 +72,17 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'text',
                 'label' => Yii::t('app/modules/mailer', 'Tracking key'),
             ],
+            [
+                'attribute' => 'web_mail_url',
+                'format' => 'html',
+                'label' => Yii::t('app/modules/mailer', 'Web-version URL'),
+                'value' => function($data) {
+                    if ($data->web_mail_url)
+                        return $data->web_mail_url;
+                    else
+                        return null;
+                }
+            ],
             'created_at:datetime',
             'updated_at:datetime',
         ],
@@ -132,8 +143,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => 'text_content',
-                    'format' => 'text',
+                    'format' => 'html',
                     'label' => Yii::t('app/modules/mailer', 'Text-сontent'),
+                    'value' => function ($data) {
+                        return '<pre>' . $data['text_content'] . '</pre>';
+                    }
                 ],
             ]
         ]);

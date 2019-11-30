@@ -1,6 +1,12 @@
 Changelog
 =========
 
+## 1.3.0 (2019-11-30)
+ * Refactoring mailer module, update README.md and USECASES.md
+ * Added sending interval
+ * Added mails component as mailer helper
+ * Added delete and deleteAll for mails
+
 ## 1.2.1 (2019-11-06)
  * Refactoring mailer options, update README.md
  

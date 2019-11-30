@@ -20,12 +20,12 @@ An example of using a unique tracking key for image in mail view of your applica
         use yii\web\AssetBundle as AppAsset;
         
         $bundle = AppAsset::register($this);
-        if (isset(Yii::$app->params["mailer.trackingKey"]))
-            $logotype = Url::to(Url::home(true) . 'mail/track?url=' . $bundle->baseUrl . '/images/logo.png&key=' . Yii::$app->params["mailer.trackingKey"]);
-        else
-            $logotype = Url::to(Url::home(true) . $bundle->baseUrl . '/images/logo.png');
-            
-        echo Html::a(Html::img($logotype, ['style' => "width:160px;"]), Url::home(true));
+        if (isset(Yii::$app->mails)) {
+            $logotype_url = Yii::$app->mails->getTrackingUrl($bundle->baseUrl . 'images/logo.png');
+        } else {
+            $logotype_url = $bundle->baseUrl;
+        }
+        echo Html::a(Html::img($logotype_url, ['style' => "width:160px;"]), Url::home(true));
         
     ?>
     
@@ -42,9 +42,11 @@ You can specify a link to the web version of the sent message, which will be gen
 
 If the option to save the web version of the mail message is enabled in the module configuration, you can use this code to generate the link in mail view of your application:
 
-    if (isset(Yii::$app->params["mailer.webMailUrl"])) {
-        $webMailUrl = Url::to(Yii::$app->params["mailer.webMailUrl"]);
-        echo Yii::t('app/modules/admin', 'Do not see the images? Go to the {link} of this email.', [
-            'link' => Html::a('web version', $webMailUrl),
-        ]);
+    if (isset(Yii::$app->mails)) {
+        if ($webversion_url = Yii::$app->mails->getWebversionUrl()) {
+            echo Yii::t('app/modules/admin', 'Do not see the images? Go to the {link} of this email.', [
+                'link' => Html::a('web-version', $webversion_url),
+            ]);
+        }
     }
+    

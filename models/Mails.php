@@ -83,6 +83,7 @@ class Mails extends ActiveRecord
 
         return $rules;
     }
+
     /**
      * {@inheritdoc}
      */
@@ -110,8 +111,77 @@ class Mails extends ActiveRecord
         ];
     }
 
+    /**
+     * Delete the original message files and web versions.
+     *
+     * @param $model, ActiveRecord object
+     */
+    public static function deleteSources($model)
+    {
+        $mailsPath = null;
+        if (isset(Yii::$app->params['mailer.mailsPath']))
+            $mailsPath = Yii::$app->params['mailer.mailsPath'];
+
+        $webMailsPath = null;
+        if (isset(Yii::$app->params['mailer.webMailsPath']))
+            $webMailsPath = Yii::$app->params['mailer.webMailsPath'];
+
+        $webRoute = null;
+        if (isset(Yii::$app->params['mailer.webRoute']))
+            $webRoute = Yii::$app->params['mailer.webRoute'];
+
+        if (!is_null($mailsPath)) {
+            $sourcePath1 = \yii\helpers\BaseFileHelper::normalizePath(Yii::getAlias($mailsPath) .'/'. $model->email_source);
+            if ($model->email_source && file_exists($sourcePath1)) {
+                unlink($sourcePath1);
+            }
+        }
+
+        if (!is_null($webMailsPath)) {
+            // create URL for cutting from the original URL to the web version of the message
+            $webMailUrl = \yii\helpers\Url::to(\yii\helpers\Url::home(true) . $webRoute);
+            $webMailUrl = ltrim(preg_replace('#/{2,}#', '/', $webMailUrl), '/');
+            // tail that contains only from the link to the file name of the web version of the message
+            $clearPath = str_replace($webMailUrl, '', $model->web_mail_url);
+            $sourcePath2 = \yii\helpers\BaseFileHelper::normalizePath(Yii::getAlias($webMailsPath) .'/'. $clearPath);
+            if ($model->web_mail_url && file_exists($sourcePath2)) {
+                unlink($sourcePath2);
+            }
+        }
+
+    }
 
     /**
+     * {@inheritdoc}
+     */
+    public function beforeDelete()
+    {
+        $this->deleteSources($this);
+        parent::beforeDelete();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function deleteAll($condition = null, $params = [])
+    {
+        if (!is_null($condition))
+            $models = self::find()->where($condition)->all();
+        else
+            $models = self::find()->all();
+
+        foreach ($models as $model) {
+            self::deleteSources($model);
+        }
+
+        return parent::deleteAll($condition = null, $params = []);
+
+    }
+
+    /**
+     * Returns a list of email statuses
+     *
+     * @param $allStatuses boolean, flag, if it is necessary to return the placeholder "All statuses"
      * @return array
      */
     public function getStatusesList($allStatuses = false)

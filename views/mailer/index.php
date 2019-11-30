@@ -111,6 +111,10 @@ $this->params['breadcrumbs'][] = $this->title;
             ]
         ]
     ]); ?>
+    <hr/>
+    <div>
+        <?= Html::a(Yii::t('app/modules/newsletters', 'Delete all'), ['mailer/clear'], ['class' => 'btn btn-danger']) ?>
+    </div>
     <?php Pjax::end(); ?>
 </div>
 
