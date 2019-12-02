@@ -269,7 +269,7 @@ class Module extends BaseModule
             if ($this->useTransport) {
 
                 // Apply encryption options for transport
-                if ($useEncryption && !is_null($this->encryption)) {
+                if ($this->useEncryption && !is_null($this->encryption)) {
                     $this->transport['encryption'] = $this->encryption;
                 }
 
@@ -301,10 +301,6 @@ class Module extends BaseModule
             // Set of mailer view`s
             if (!is_null($this->viewPath))
                 $mailer->setViewPath($this->viewPath);
-
-            /** !!! **/
-            if (isset(Yii::$app->params["mailer.saveWebMails"]))
-                $this->saveWebMails = Yii::$app->params["mailer.saveWebMails"];
 
         }
 
