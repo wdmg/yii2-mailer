@@ -30,7 +30,7 @@ class m190803_225334_mails extends Migration
             'is_sended' => $this->boolean()->null(),
             'is_viewed' => $this->boolean()->null(),
             'tracking_key' => $this->string(32)->null(),
-            'web_mail_url' => $this->string(64)->null(),
+            'web_mail_url' => $this->string(255)->null(),
 
             'created_at' => $this->dateTime()->defaultExpression('CURRENT_TIMESTAMP'),
             'created_by' => $this->integer(11)->null(),

@@ -7,7 +7,7 @@ namespace wdmg\mailer\components;
  * Yii2 MailerHelper
  *
  * @category        Component
- * @version         1.3.0
+ * @version         1.3.1
  * @author          Alexsander Vyshnyvetskyy <alex.vyshnyvetskyy@gmail.com>
  * @link            https://github.com/wdmg/yii2-mailer
  * @copyright       Copyright (c) 2019 W.D.M.Group, Ukraine
@@ -50,9 +50,10 @@ class Mails extends Component
     public function getTrackingUrl($baseUrl)
     {
         if ($trackingKey = $this->module->genTrackingKey())
-            return Url::to(Url::home(true) . 'mail/track?url=' . $baseUrl . '&key=' . $trackingKey);
+            return Url::home(true) . 'mail/track?url=' . $baseUrl . '&key=' . $trackingKey;
         else
-            return Url::to(Url::home(true) . $baseUrl);
+            return Url::home(true) . $baseUrl;
+
     }
 
     /**
@@ -60,10 +61,13 @@ class Mails extends Component
      * @return null|string, URL to the web version or null if web version is disabled by config
      */
     public function getWebversionUrl() {
-        if ($webMailUrl = $this->module->genWebMailUrl())
-            return Url::to($webMailUrl);
-        else
+        if ($webMailUrl = $this->module->genWebMailUrl()) {
+            if (Url::isRelative($webMailUrl))
+                return Url::home(true) . $webMailUrl;
+            else
+                return $webMailUrl;
+        } else {
             return null;
-
+        }
     }
 }

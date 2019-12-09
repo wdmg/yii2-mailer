@@ -70,10 +70,9 @@ class Mails extends ActiveRecord
         $rules = [
             [['email_from', 'email_to', 'is_sended'], 'required'],
             [['email_from', 'email_to', 'email_copy'], 'email', 'allowName' => true],
-            [['email_subject', 'email_source'], 'string', 'max' => 255],
+            [['email_subject', 'email_source', 'web_mail_url'], 'string', 'max' => 255],
             [['is_sended', 'is_viewed'], 'boolean'],
             [['tracking_key'], 'string', 'max' => 32],
-            [['web_mail_url'], 'string', 'max' => 64],
             [['source', 'created_at', 'updated_at'], 'safe'],
         ];
 

@@ -6,7 +6,7 @@ namespace wdmg\mailer;
  * Yii2 Mailer
  *
  * @category        Module
- * @version         1.3.0
+ * @version         1.3.1
  * @author          Alexsander Vyshnyvetskyy <alex.vyshnyvetskyy@gmail.com>
  * @link            https://github.com/wdmg/yii2-mailer
  * @copyright       Copyright (c) 2019 W.D.M.Group, Ukraine
@@ -47,7 +47,7 @@ class Module extends BaseModule
     /**
      * @var string the module version
      */
-    private $version = "1.3.0";
+    private $version = "1.3.1";
 
     /**
      * @var integer, priority of initialization
@@ -106,6 +106,11 @@ class Module extends BaseModule
     ];
 
     /**
+     * @var boolean, flag for use file transport (ignoring if $useTransport == true)
+     */
+    public $useFileTransport = true;
+
+    /**
      * @var boolean, flag for use encryption in transport
      */
     public $useEncryption = false;
@@ -113,7 +118,7 @@ class Module extends BaseModule
     /**
      * @var array, default encryption configuration
      */
-    public $encryption = 'ssl';
+    public $encryption = 'SSL';
 
     /**
      * @var boolean, flag for use stream options in transport
@@ -238,6 +243,9 @@ class Module extends BaseModule
         if (isset(Yii::$app->params["mailer.useTransport"]))
             $this->useTransport = Yii::$app->params["mailer.useTransport"];
 
+        if (isset(Yii::$app->params["mailer.useFileTransport"]))
+            $this->useFileTransport = Yii::$app->params["mailer.useFileTransport"];
+
         if (isset(Yii::$app->params["mailer.transport"]))
             $this->transport = Yii::$app->params["mailer.transport"];
 
@@ -291,7 +299,12 @@ class Module extends BaseModule
 
                 $mailer->useFileTransport = false;
             } else {
-                $mailer->useFileTransport = true;
+
+                if ($this->useFileTransport)
+                    $mailer->useFileTransport = true;
+                else
+                    $mailer->useFileTransport = false;
+
             }
 
             // Enable mailer log`s
@@ -385,7 +398,7 @@ class Module extends BaseModule
 
                 $mails->email_subject = $message->getSubject();
 
-                if ($this->useTransport)
+                if ($this->useTransport || !$this->useFileTransport)
                     $mails->is_sended = $event->isSuccessful;
                 else
                     $mails->is_sended = false;
@@ -496,8 +509,8 @@ class Module extends BaseModule
         if ($this->saveWebMails) {
             $filename = \date('Y-m-d-h-i-s') . '_' . \time() . '-' . rand(1000, 9999) . '.html';
             $this->setWebMailFilename($filename);
-            $_webMailUrl = \yii\helpers\Url::to(\yii\helpers\Url::home(true) . $this->webRoute . '/' . $filename);
-            $_webMailUrl = ltrim(preg_replace('#/{2,}#', '/', $_webMailUrl), '/');
+            $_webMailUrl = ltrim(preg_replace('#/{2,}#', '/', ($this->webRoute . '/' . $filename)), '/');
+            $_webMailUrl = \yii\helpers\Url::to(\yii\helpers\Url::home(true) . $_webMailUrl);
             $this->setWebMailUrl($_webMailUrl);
             return $_webMailUrl;
         } else {

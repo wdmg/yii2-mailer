@@ -90,7 +90,6 @@ Use the `Module::dashboardNavItems()` method of the module to generate a navigat
     ?>
 
 # Status and version [ready to use]
+* v.1.3.1 - Some bugs fixed
 * v.1.3.0 - Refactoring mailer module, added mails component, update README.md and USECASES.md
 * v.1.2.1 - Refactoring mailer options, update README.md
-* v.1.2.0 - Added mailer transport configuration
-* v.1.1.3 - Resolve static function

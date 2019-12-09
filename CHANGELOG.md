@@ -1,6 +1,9 @@
 Changelog
 =========
 
+## 1.3.1 (2019-12-09)
+ * Some bugs fixed
+
 ## 1.3.0 (2019-11-30)
  * Refactoring mailer module, update README.md and USECASES.md
  * Added sending interval
