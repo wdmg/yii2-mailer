@@ -130,6 +130,7 @@ class MailerController extends Controller
                 'email_from' => $message->getHeaderValue('From'),
                 'email_to' => $message->getHeaderValue('To'),
                 'email_copy' => $message->getHeaderValue('CC'),
+                'reply_to' => $message->getHeaderValue('Reply-To'),
                 'mime_version' => $message->getHeaderValue('MIME-Version'),
                 'text_content' => $message->getTextContent(),
                 'html_content' => \yii\helpers\HtmlPurifier::process($message->getHtmlContent()),

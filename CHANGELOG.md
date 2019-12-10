@@ -2,6 +2,7 @@ Changelog
 =========
 
 ## 1.3.2 (2019-12-10)
+ * Added reply-to for view raw messages
  * Fixed deprecated class declaration
 
 ## 1.3.1 (2019-12-09)

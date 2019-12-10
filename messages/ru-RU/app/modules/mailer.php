@@ -17,6 +17,7 @@ return [
     'Email to (copy)' => "Эл.адрес получателя (копия)",
     'MIME-version' => "MIME-версия",
     'Content' => "Содержимое",
+    'Reply to' => "Адрес для ответа",
     'Text-сontent' => "Текстовый контент",
     'HTML-content' => "HTML-контент",
     'Source' => "Исходник",

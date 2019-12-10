@@ -123,6 +123,11 @@ $this->params['breadcrumbs'][] = $this->title;
                     'label' => Yii::t('app/modules/mailer', 'Email to (copy)'),
                 ],
                 [
+                    'attribute' => 'reply_to',
+                    'format' => 'text',
+                    'label' => Yii::t('app/modules/mailer', 'Reply to'),
+                ],
+                [
                     'attribute' => 'mime_version',
                     'format' => 'text',
                     'label' => Yii::t('app/modules/mailer', 'MIME-version'),
