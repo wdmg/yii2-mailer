@@ -6,7 +6,7 @@ namespace wdmg\mailer;
  * Yii2 Mailer
  *
  * @category        Module
- * @version         1.3.1
+ * @version         1.3.2
  * @author          Alexsander Vyshnyvetskyy <alex.vyshnyvetskyy@gmail.com>
  * @link            https://github.com/wdmg/yii2-mailer
  * @copyright       Copyright (c) 2019 W.D.M.Group, Ukraine
@@ -47,7 +47,7 @@ class Module extends BaseModule
     /**
      * @var string the module version
      */
-    private $version = "1.3.1";
+    private $version = "1.3.2";
 
     /**
      * @var integer, priority of initialization
@@ -328,7 +328,7 @@ class Module extends BaseModule
         // Mail event`s
         if (!($app instanceof \yii\console\Application) && $this->module && ($app->mailer instanceof \yii\base\Component)) {
 
-            \yii\base\Event::on(\yii\mail\BaseMailer::className(), \yii\mail\BaseMailer::EVENT_BEFORE_SEND, function ($event) use ($app) {
+            \yii\base\Event::on(\yii\mail\BaseMailer::class, \yii\mail\BaseMailer::EVENT_BEFORE_SEND, function ($event) use ($app) {
 
                 // Set message sending interval
                 if (!is_null($this->sendingInterval))
@@ -370,7 +370,7 @@ class Module extends BaseModule
 
             });
 
-            \yii\base\Event::on(\yii\mail\BaseMailer::className(), \yii\mail\BaseMailer::EVENT_AFTER_SEND, function ($event) {
+            \yii\base\Event::on(\yii\mail\BaseMailer::class, \yii\mail\BaseMailer::EVENT_AFTER_SEND, function ($event) {
 
                 // Get instance of message
                 $message = $event->message;

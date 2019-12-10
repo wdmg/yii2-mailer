@@ -21,7 +21,7 @@ class DefaultController extends Controller
     {
         $behaviors = [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'index' => ['get'],
                     'track' => ['get'],

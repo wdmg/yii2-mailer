@@ -1,6 +1,9 @@
 Changelog
 =========
 
+## 1.3.2 (2019-12-10)
+ * Fixed deprecated class declaration
+
 ## 1.3.1 (2019-12-09)
  * Some bugs fixed
 
