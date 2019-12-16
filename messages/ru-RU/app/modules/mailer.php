@@ -32,6 +32,14 @@ return [
     'Created by' => "Автор создания",
     'Updated by' => "Автор изменений",
 
+    'First page' => 'Первая страница',
+    'Last page' => 'Последняя страница',
+    '&larr; Prev page' => '&larr; Предыдущая страница',
+    'Next page &rarr;' => 'Следующая страница &rarr;',
+
+    'Download report' => "Загрузить отчёт",
+    'Delete all' => "Удалить всё",
+
     'Source data' => "Исходные данные",
     'Actions' => "Действия",
     'All statuses' => "Все статусы",

@@ -109,11 +109,31 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 'template' => '{view}&nbsp;{download}'
             ]
-        ]
+        ],
+        'pager' => [
+            'options' => [
+                'class' => 'pagination',
+            ],
+            'maxButtonCount' => 5,
+            'activePageCssClass' => 'active',
+            'prevPageCssClass' => '',
+            'nextPageCssClass' => '',
+            'firstPageCssClass' => 'previous',
+            'lastPageCssClass' => 'next',
+            'firstPageLabel' => Yii::t('app/modules/mailer', 'First page'),
+            'lastPageLabel'  => Yii::t('app/modules/mailer', 'Last page'),
+            'prevPageLabel'  => Yii::t('app/modules/mailer', '&larr; Prev page'),
+            'nextPageLabel'  => Yii::t('app/modules/mailer', 'Next page &rarr;')
+        ],
     ]); ?>
     <hr/>
-    <div>
-        <?= Html::a(Yii::t('app/modules/newsletters', 'Delete all'), ['mailer/clear'], ['class' => 'btn btn-danger']) ?>
+
+    <div class="btn-group">
+        <?= Html::a(Yii::t('app/modules/mailer', 'Download report'), ['mailer/export'], [
+            'class' => 'btn btn-info',
+            'data-pjax' => '0'
+        ]) ?>
+        <?= Html::a(Yii::t('app/modules/mailer', 'Delete all'), ['mailer/clear'], ['class' => 'btn btn-danger']) ?>
     </div>
     <?php Pjax::end(); ?>
 </div>

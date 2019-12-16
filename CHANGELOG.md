@@ -1,6 +1,9 @@
 Changelog
 =========
 
+## 1.3.3 (2019-12-16)
+ * Added pagination and report export
+ 
 ## 1.3.2 (2019-12-10)
  * Added reply-to for view raw messages
  * Fixed deprecated class declaration

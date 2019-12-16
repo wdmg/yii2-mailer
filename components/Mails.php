@@ -7,7 +7,7 @@ namespace wdmg\mailer\components;
  * Yii2 MailerHelper
  *
  * @category        Component
- * @version         1.3.2
+ * @version         1.3.3
  * @author          Alexsander Vyshnyvetskyy <alex.vyshnyvetskyy@gmail.com>
  * @link            https://github.com/wdmg/yii2-mailer
  * @copyright       Copyright (c) 2019 W.D.M.Group, Ukraine

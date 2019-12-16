@@ -4,6 +4,7 @@ namespace wdmg\mailer\controllers;
 
 use wdmg\mailer\Module;
 use Yii;
+use yii\swiftmailer\Mailer;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -33,7 +34,6 @@ class MailerController extends Controller
                     'create' => ['get', 'post'],
                     'update' => ['get', 'post'],
                     'export' => ['get'],
-                    'import' => ['post'],
                 ],
             ],
             'access' => [
@@ -165,6 +165,21 @@ class MailerController extends Controller
         $model->deleteAll();
 
         return $this->redirect(['mailer/index']);
+    }
+
+    public function actionExport()
+    {
+        $model = new Mails();
+        $filename = 'mailer_' . date('dmY_His') . '.csv';
+        if ($list = $model::find()->asArray()->all()) {
+            if ($output = \wdmg\helpers\ArrayHelper::exportCSV($list, ['id', 'email_from', 'email_to', 'email_copy', 'email_subject', 'is_sended', 'is_viewed', 'created_at', 'updated_at'], ";", true)) {
+                Yii::$app->response->sendContentAsFile($output, $filename, [
+                    'mimeType' => 'text/csv',
+                    'inline' => false
+                ])->send();
+            }
+        }
+        $this->redirect(['mailer/index']);
     }
 
     /**

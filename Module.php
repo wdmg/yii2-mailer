@@ -367,7 +367,6 @@ class Module extends BaseModule
                         $html = '';
                     }
                 }
-
             });
 
             \yii\base\Event::on(\yii\mail\BaseMailer::class, \yii\mail\BaseMailer::EVENT_AFTER_SEND, function ($event) {
