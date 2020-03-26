@@ -1,6 +1,9 @@
 Changelog
 =========
 
+## 1.3.4 (2020-03-26)
+ * Up to date dependencies
+ 
 ## 1.3.3 (2019-12-16)
  * Added pagination and report export
  
