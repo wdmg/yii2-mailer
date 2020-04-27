@@ -1,8 +1,8 @@
 [![Yii2](https://img.shields.io/badge/required-Yii2_v2.0.33-blue.svg)](https://packagist.org/packages/yiisoft/yii2)
-[![Github all releases](https://img.shields.io/github/downloads/wdmg/yii2-mailer/total.svg)](https://GitHub.com/wdmg/yii2-mailer/releases/)
+[![Downloads](https://img.shields.io/packagist/dt/wdmg/yii2-mailer.svg)](https://packagist.org/packages/wdmg/yii2-mailer)
+[![Packagist Version](https://img.shields.io/packagist/v/wdmg/yii2-mailer.svg)](https://packagist.org/packages/wdmg/yii2-mailer)
 ![Progress](https://img.shields.io/badge/progress-ready_to_use-green.svg)
 [![GitHub license](https://img.shields.io/github/license/wdmg/yii2-mailer.svg)](https://github.com/wdmg/yii2-mailer/blob/master/LICENSE)
-![GitHub release](https://img.shields.io/github/release/wdmg/yii2-mailer/all.svg)
 
 # Yii2 Mailer
 Mail manager for Yii2
@@ -90,6 +90,7 @@ Use the `Module::dashboardNavItems()` method of the module to generate a navigat
     ?>
 
 # Status and version [ready to use]
+* v.1.3.5 - Update README.md and dependencies
 * v.1.3.4 - Up to date dependencies
 * v.1.3.3 - Added pagination and report export
 * v.1.3.2 - Fixed deprecated class declaration

@@ -1,6 +1,9 @@
 Changelog
 =========
 
+## 1.3.5 (2020-04-28)
+ * Update README.md and dependencies
+ 
 ## 1.3.4 (2020-03-26)
  * Up to date dependencies
  
