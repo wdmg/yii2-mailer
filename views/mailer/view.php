@@ -62,7 +62,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function($data) use ($module) {
                     $sourcePath = \yii\helpers\BaseFileHelper::normalizePath(Yii::getAlias($module->mailsPath) .'/'. $data->email_source);
                     if ($data->email_source && file_exists($sourcePath))
-                        return Html::a($data->email_source, Url::to(['mailer/download', 'source' => $data->email_source]));
+                        return Html::a($data->email_source, Url::to(['mailer/download', 'source' => $data->email_source], [
+                            'target' => "_blank",
+                            'data-pjax' => 0
+                        ]));
                     else
                         return $data->email_source;
                 }

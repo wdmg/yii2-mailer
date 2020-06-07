@@ -1,6 +1,9 @@
 Changelog
 =========
 
+## 1.3.*
+ * Fixed mail message body
+ 
 ## 1.3.5 (2020-04-28)
  * Update README.md and dependencies
  

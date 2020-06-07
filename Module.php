@@ -345,16 +345,32 @@ class Module extends BaseModule
                     $swiftMessage = $message->getSwiftMessage();
                     $reflection = new \ReflectionObject($swiftMessage);
                     $parent = $reflection->getParentClass()->getParentClass()->getParentClass();
-                    $body = $parent->getProperty('_immediateChildren');
-                    $body->setAccessible(true);
-                    $childs = $body->getValue($swiftMessage);
-                    foreach ($childs as $child) {
-                        if ($child instanceof \Swift_MimePart && $child->getContentType() == 'text/html') {
-                            $html = $child->getBody();
-                            break;
-                        } else {
-                            $html = $message->toString();
+
+                    if ($parent->hasProperty('_immediateChildren')) {
+                        if ($body = $parent->getProperty('_immediateChildren')) {
+                            $body->setAccessible(true);
+                            $childs = $body->getValue($swiftMessage);
+                            foreach ($childs as $child) {
+                                if ($child instanceof \Swift_MimePart && $child->getContentType() == 'text/html') {
+                                    $html = $child->getBody();
+                                    break;
+                                } else {
+                                    $html = $message->toString();
+                                }
+                            }
+                            $body->setAccessible(true);
+                            $childs = $body->getValue($swiftMessage);
+                            foreach ($childs as $child) {
+                                if ($child instanceof \Swift_MimePart && $child->getContentType() == 'text/html') {
+                                    $html = $child->getBody();
+                                    break;
+                                } else {
+                                    $html = $message->toString();
+                                }
+                            }
                         }
+                    } else {
+                        $html = $message->toString();
                     }
                 } else {
                     $html = $message->toString();
