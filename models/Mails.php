@@ -136,13 +136,16 @@ class Mails extends ActiveRecord
             }
         }
 
-        if (!is_null($webMailsPath)) {
-            // create URL for cutting from the original URL to the web version of the message
+        if (!is_null($webMailsPath) && !Yii::$app->mails->module->isConsole()) {
+
+            // Create URL for cutting from the original URL to the web version of the message
             $webMailUrl = \yii\helpers\Url::to(\yii\helpers\Url::home(true) . $webRoute);
             $webMailUrl = ltrim(preg_replace('#/{2,}#', '/', $webMailUrl), '/');
-            // tail that contains only from the link to the file name of the web version of the message
+
+            // Tail that contains only from the link to the file name of the web version of the message
             $clearPath = str_replace($webMailUrl, '', $model->web_mail_url);
             $sourcePath2 = \yii\helpers\BaseFileHelper::normalizePath(Yii::getAlias($webMailsPath) .'/'. $clearPath);
+
             if ($model->web_mail_url && file_exists($sourcePath2)) {
                 unlink($sourcePath2);
             }

@@ -41,6 +41,7 @@ class InitController extends Controller
         echo "Select the operation you want to perform:\n";
         echo "  1) Apply all module migrations\n";
         echo "  2) Revert all module migrations\n";
+        echo "  3) Clear mails cache\n\n";
         echo "Your choice: ";
 
         if(!is_null($this->choice))
@@ -50,8 +51,17 @@ class InitController extends Controller
 
         if ($selected == "1") {
             Yii::$app->runAction('migrate/up', ['migrationPath' => '@vendor/wdmg/yii2-mailer/migrations', 'interactive' => true]);
-        } else if($selected == "2") {
+        } else if ($selected == "2") {
             Yii::$app->runAction('migrate/down', ['migrationPath' => '@vendor/wdmg/yii2-mailer/migrations', 'interactive' => true]);
+        } else if ($selected == "3") {
+            if ($mailer = new \wdmg\mailer\models\Mails()) {
+
+                if ($mailer::deleteAll())
+                    echo $this->ansiFormat("Mails cache has been successfully cleaned!\n", Console::FG_GREEN);
+                else
+                    echo $this->ansiFormat("Error clearing mails cache log.\n", Console::FG_RED);
+
+            }
         } else {
             echo $this->ansiFormat("Error! Your selection has not been recognized.\n\n", Console::FG_RED);
             return ExitCode::UNSPECIFIED_ERROR;

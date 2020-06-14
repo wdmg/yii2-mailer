@@ -1,7 +1,9 @@
 Changelog
 =========
 
-## 1.3.*
+## 1.3.6 (2020-06-14)
+ * Update README.md and dependencies
+ * Clear mails cache from console
  * Fixed mail message body
  
 ## 1.3.5 (2020-04-28)
