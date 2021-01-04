@@ -21,7 +21,7 @@
     }
   ],
   "require": {
-    "yiisoft/yii2": "^2.0.35",
+    "yiisoft/yii2": "^2.0.40",
     "wdmg/yii2-base": "^1.2.4",
     "wdmg/yii2-selectinput": "^1.0.9",
     "zbateson/mail-mime-parser": "^1.1.5"
