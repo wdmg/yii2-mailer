@@ -200,7 +200,7 @@ class Module extends BaseModule
     /**
      * {@inheritdoc}
      */
-    public function dashboardNavItems($createLink = false)
+    public function dashboardNavItems($options = false)
     {
         $items = [
             'label' => $this->name,
@@ -308,7 +308,7 @@ class Module extends BaseModule
             }
 
             // Enable mailer log`s
-            if ($this->enableLog)
+            if ($this->enableLog && !YII_ENV_TEST)
                 $mailer->enableSwiftMailerLogging = $this->enableLog;
 
             // Set of mailer view`s
