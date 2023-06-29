@@ -1,6 +1,9 @@
 Changelog
 =========
 
+## 1.4.0 (2023-06-29)
+ * Update copyrights, fix nav menu
+
 ## 1.3.6 (2020-06-14)
  * Update README.md and dependencies
  * Clear mails cache from console
